@@ -41,8 +41,6 @@ export const API_ENDPOINT_INSTRUCTION_MAP: Record<string, string> = {
   [`${HttpMethod.DELETE}:/api/v1/orders`]: 'orderCancelAll',
 
   // RFQ
-  [`${HttpMethod.GET}:/api/v1/rfq/quote`]: 'quoteSubmit',
+  [`${HttpMethod.GET}:/api/v1/rfq/quote`]: 'quoteSubmit'
 
-  // Keypair
-  [`${HttpMethod.GET}:/wapi/v1/keypair/refresh`]: 'refreshKeypair'
 };

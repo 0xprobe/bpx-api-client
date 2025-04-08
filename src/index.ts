@@ -3,6 +3,7 @@ export { BpxApiClient } from './bpxApiClient';
 export * from './authentication/bpxCredentials';
 export * from './authentication/bpxSigner';
 export * from './http/common/api.types';
+export * from './http/common/common.types';
 export * from './http/public/assets/assets.types';
 export * from './http/public/markets/markets.types';
 export * from './http/public/trades/trades.types';
