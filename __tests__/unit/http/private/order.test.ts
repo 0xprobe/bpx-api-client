@@ -1,12 +1,6 @@
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
-import { 
-  OrderRequest,
-  OrderExecutePayload,
-  OpenOrdersRequest,
-  OrderCancelAllPayload,
-  OrderType
-} from '../../../../src/http/private/order/order.types';
+import { OrderRequest, OrderExecutePayload, OpenOrdersRequest, OrderCancelAllPayload, OrderType, OpenOrder } from '../../../../src/http/private/order/order.types';
 import { Side, TimeInForce } from '../../../../src/http/common/common.types';
 
 describe('Order API Tests', () => {
@@ -17,21 +11,22 @@ describe('Order API Tests', () => {
     bpxClient = createClient();
   });
 
-  describe('executeOrder', () => {
-    it('should execute order successfully', async () => {
+  describe('Execute order', () => {
+    it('Submits an order to the matching engine for execution', async () => {
       const payload: OrderExecutePayload = {
         symbol: 'SOL_USDC',
         side: Side.Bid,
         orderType: OrderType.Limit,
         quantity: '0.07',
-        price: '85',
-        timeInForce: TimeInForce.GTC
+        price: '95',
+        timeInForce: TimeInForce.GTC,
+        postOnly: true
       };
       
       const response = await bpxClient.order.executeOrder(payload);
       
       expect(isSuccess(response)).toBe(true);
-      const order = response.data;
+      const order = response.data as OpenOrder;
       
       // Save order ID for other tests
       orderId = order.id;
@@ -110,8 +105,8 @@ describe('Order API Tests', () => {
     });
   });
 
-  describe('getOpenOrder', () => {
-    it('should get open order successfully', async () => {
+  describe('Get open order', () => {
+    it('Retrieves an open order from the order book', async () => {
       const request: OrderRequest = {
         symbol: 'SOL_USDC',
         orderId: orderId // Use the saved order ID
@@ -120,7 +115,7 @@ describe('Order API Tests', () => {
       const response = await bpxClient.order.getOpenOrder(request);
       
       expect(isSuccess(response)).toBe(true);
-      const order = response.data;
+      const order = response.data as OpenOrder;
       
       // Common fields for both MarketOrder and LimitOrder
       expect(order).toMatchObject({
@@ -196,8 +191,8 @@ describe('Order API Tests', () => {
     });
   });
 
-  describe('cancelOpenOrder', () => {
-    it('should cancel open order successfully', async () => {
+  describe('Cancel open order', () => {
+    it('Cancels an open order from the order book', async () => {
       const request: OrderRequest = {
         symbol: 'SOL_USDC',
         orderId: orderId // Use the saved order ID
@@ -206,7 +201,7 @@ describe('Order API Tests', () => {
       const response = await bpxClient.order.cancelOpenOrder(request);
       
       expect(isSuccess(response)).toBe(true);
-      const order = response.data;
+      const order = response.data as OpenOrder;
       
       // Common fields for both MarketOrder and LimitOrder
       expect(order).toMatchObject({
@@ -282,8 +277,8 @@ describe('Order API Tests', () => {
     });
   });
 
-  describe('getOpenOrders', () => {
-    it('should get open orders successfully', async () => {
+  describe('Get open orders', () => {
+    it('Retrieves all open orders', async () => {
       const request: OpenOrdersRequest = {
         symbol: 'SOL_USDC'
       };
@@ -291,9 +286,10 @@ describe('Order API Tests', () => {
       const response = await bpxClient.order.getOpenOrders(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const order = response.data[0];
-        
+      const orders = response.data as OpenOrder[];
+      // expect(orders.length).toBeGreaterThan(0);
+
+      orders.forEach(order => {
         // Common fields for both MarketOrder and LimitOrder
         expect(order).toMatchObject({
           id: expect.any(String),
@@ -365,12 +361,12 @@ describe('Order API Tests', () => {
             quantity: expect.any(String)
           });
         }
-      }
+      });
     });
   });
 
-  describe('cancelOpenOrders', () => {
-    it('should cancel open orders successfully', async () => {
+  describe('Cancel open orders', () => {
+    it('Cancels all open orders on the specified market', async () => {
       const request: OrderCancelAllPayload = {
         symbol: 'SOL_USDC'
       };
@@ -378,9 +374,10 @@ describe('Order API Tests', () => {
       const response = await bpxClient.order.cancelOpenOrders(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const order = response.data[0];
-        
+      const orders = response.data as OpenOrder[];
+      // expect(orders.length).toBeGreaterThan(0);
+
+      orders.forEach(order => {
         // Common fields for both MarketOrder and LimitOrder
         expect(order).toMatchObject({
           id: expect.any(String),
@@ -452,7 +449,8 @@ describe('Order API Tests', () => {
             quantity: expect.any(String)
           });
         }
-      }
+      });
     });
   });
+
 }); 

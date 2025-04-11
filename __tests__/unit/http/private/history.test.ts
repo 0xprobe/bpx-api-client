@@ -1,7 +1,6 @@
-import { BorrowHistoryRequest, BorrowPositionHistoryRequest, FillHistoryRequest, FundingPaymentsRequest, InterestHistoryRequest, OrderHistoryRequest, ProfitAndLossHistoryRequest, SettlementHistoryRequest } from '../../../../src/http/private/history/history.types';
+import { BorrowHistoryRequest, BorrowLendMovement, BorrowLendPositionRow, BorrowPositionHistoryRequest, FillHistoryRequest, FundingPayment, FundingPaymentsRequest, InterestHistoryRequest, InterestPayment, Order, OrderFill, OrderHistoryRequest, PnlPayment, ProfitAndLossHistoryRequest, Settlement, SettlementHistoryRequest } from '../../../../src/http/private/history/history.types';
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
-
 
 describe('History API Tests', () => {
   let bpxClient: ReturnType<typeof createClient>;
@@ -10,8 +9,8 @@ describe('History API Tests', () => {
     bpxClient = createClient();
   });
 
-  describe('getBorrowLendHistory', () => {
-    it('should get borrow lend history successfully', async () => {
+  describe('Get borrow history', () => {
+    it('History of borrow and lend operations for the account', async () => {
       const request: BorrowHistoryRequest = {
         limit: 10,
         offset: 0
@@ -20,10 +19,10 @@ describe('History API Tests', () => {
       const response = await bpxClient.history.getBorrowLendHistory(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const movement = response.data[0];
-        
-        // Required fields
+      const movements = response.data as BorrowLendMovement[];
+      // expect(movements.length).toBeGreaterThan(0);
+
+      movements.forEach(movement => {
         expect(movement).toMatchObject({
           eventType: expect.any(String),
           positionId: expect.any(String),
@@ -32,20 +31,18 @@ describe('History API Tests', () => {
           symbol: expect.any(String),
           timestamp: expect.any(String)
         });
-
-        // Optional fields type checking if they exist
         if (movement.positionQuantity !== null) {
           expect(typeof movement.positionQuantity).toBe('string');
         }
         if (movement.spotMarginOrderId !== null) {
           expect(typeof movement.spotMarginOrderId).toBe('string');
         }
-      }
+      });
     });
   });
 
-  describe('getInterestHistory', () => {
-    it('should get interest history successfully', async () => {
+  describe('Get interest history', () => {
+    it('History of the interest payments for borrows and lends for the account', async () => {
       const request: InterestHistoryRequest = {
         limit: 10,
         offset: 0
@@ -54,9 +51,10 @@ describe('History API Tests', () => {
       const response = await bpxClient.history.getInterestHistory(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const payment = response.data[0];
-        
+      const payments = response.data as InterestPayment[];
+      // expect(payments.length).toBeGreaterThan(0);
+
+      payments.forEach(payment => {
         expect(payment).toMatchObject({
           paymentType: expect.any(String),
           interestRate: expect.any(String),
@@ -67,12 +65,12 @@ describe('History API Tests', () => {
           symbol: expect.any(String),
           timestamp: expect.any(String)
         });
-      }
+      });
     });
   });
 
-  describe('getBorrowLendPositionHistory', () => {
-    it('should get borrow lend position history successfully', async () => {
+  describe('Get borrow position history', () => {
+    it('History of borrow and lend positions for the account', async () => {
       const request: BorrowPositionHistoryRequest = {
         limit: 10,
         offset: 0
@@ -81,9 +79,10 @@ describe('History API Tests', () => {
       const response = await bpxClient.history.getBorrowLendPositionHistory(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const position = response.data[0];
-        
+      const positions = response.data as BorrowLendPositionRow[];
+      // expect(positions.length).toBeGreaterThan(0);
+
+      positions.forEach(position => {
         expect(position).toMatchObject({
           positionId: expect.any(String),
           quantity: expect.any(String),
@@ -94,12 +93,12 @@ describe('History API Tests', () => {
           side: expect.any(String),
           createdAt: expect.any(String)
         });
-      }
+      });
     });
   });
 
-  describe('getFillHistory', () => {
-    it('should get fill history successfully', async () => {
+  describe('Get fill history', () => {
+    it('Retrieves historical fills, with optional filtering for a specific order or symbol', async () => {
       const request: FillHistoryRequest = {
         limit: 10,
         offset: 0
@@ -108,10 +107,10 @@ describe('History API Tests', () => {
       const response = await bpxClient.history.getFillHistory(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const fill = response.data[0];
-        
-        // Required fields
+      const fills = response.data as OrderFill[];
+      // expect(fills.length).toBeGreaterThan(0);
+
+      fills.forEach(fill => {
         expect(fill).toMatchObject({
           fee: expect.any(String),
           feeSymbol: expect.any(String),
@@ -123,8 +122,6 @@ describe('History API Tests', () => {
           symbol: expect.any(String),
           timestamp: expect.any(String)
         });
-
-        // Optional fields type checking if they exist
         if (fill.clientId !== null) {
           expect(typeof fill.clientId).toBe('string');
         }
@@ -134,12 +131,12 @@ describe('History API Tests', () => {
         if (fill.tradeId !== null) {
           expect(typeof fill.tradeId).toBe('number');
         }
-      }
+      });
     });
   });
 
-  describe('getFundingPayments', () => {
-    it('should get funding payments successfully', async () => {
+  describe('Get funding payments', () => {
+    it('Users funding payment history for futures', async () => {
       const request: FundingPaymentsRequest = {
         limit: 10,
         offset: 0
@@ -148,10 +145,10 @@ describe('History API Tests', () => {
       const response = await bpxClient.history.getFundingPayments(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const payment = response.data[0];
-        
-        // Required fields
+      const payments = response.data as FundingPayment[];
+      // expect(payments.length).toBeGreaterThan(0);
+
+      payments.forEach(payment => {
         expect(payment).toMatchObject({
           userId: expect.any(Number),
           symbol: expect.any(String),
@@ -159,17 +156,15 @@ describe('History API Tests', () => {
           intervalEndTimestamp: expect.any(String),
           fundingRate: expect.any(String)
         });
-
-        // Optional fields type checking if they exist
         if (payment.subaccountId !== null) {
           expect(typeof payment.subaccountId).toBe('number');
         }
-      }
+      });
     });
   });
 
-  describe('getOrderHistory', () => {
-    it('should get order history successfully', async () => {
+  describe('Get order history', () => {
+    it('Retrieves the order history for the user', async () => {
       const request: OrderHistoryRequest = {
         limit: 10,
         offset: 0
@@ -178,10 +173,10 @@ describe('History API Tests', () => {
       const response = await bpxClient.history.getOrderHistory(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const order = response.data[0];
-        
-        // Required fields
+      const orders = response.data as Order[];
+      // expect(orders.length).toBeGreaterThan(0);
+
+      orders.forEach(order => {
         expect(order).toMatchObject({
           id: expect.any(String),
           orderType: expect.any(String),
@@ -191,8 +186,6 @@ describe('History API Tests', () => {
           symbol: expect.any(String),
           timeInForce: expect.any(String)
         });
-
-        // Optional fields type checking if they exist
         if (order.executedQuantity !== null) {
           expect(typeof order.executedQuantity).toBe('string');
         }
@@ -241,12 +234,12 @@ describe('History API Tests', () => {
         if (order.triggerQuantity !== null) {
           expect(typeof order.triggerQuantity).toBe('string');
         }
-      }
+      });
     });
   });
 
-  describe('getProfitAndLossHistory', () => {
-    it('should get profit and loss history successfully', async () => {
+  describe('Get profit and loss history', () => {
+    it('History of profit and loss realization for an account', async () => {
       const request: ProfitAndLossHistoryRequest = {
         limit: 10,
         offset: 0
@@ -255,20 +248,21 @@ describe('History API Tests', () => {
       const response = await bpxClient.history.getProfitAndLossHistory(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const payment = response.data[0];
-        
+      const payments = response.data as PnlPayment[];
+      // expect(payments.length).toBeGreaterThan(0);
+
+      payments.forEach(payment => {
         expect(payment).toMatchObject({
           pnlRealized: expect.any(String),
           symbol: expect.any(String),
           timestamp: expect.any(String)
         });
-      }
+      });
     });
   });
 
-  describe('getSettlementHistory', () => {
-    it('should get settlement history successfully', async () => {
+  describe('Get settlement history', () => {
+    it('History of settlement operations for the account', async () => {
       const request: SettlementHistoryRequest = {
         limit: 10,
         offset: 0
@@ -277,22 +271,21 @@ describe('History API Tests', () => {
       const response = await bpxClient.history.getSettlementHistory(request);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const settlement = response.data[0];
-        
-        // Required fields
+      const settlements = response.data as Settlement[];
+      // expect(settlements.length).toBeGreaterThan(0);
+
+      settlements.forEach(settlement => {
         expect(settlement).toMatchObject({
           quantity: expect.any(String),
           source: expect.any(String),
           timestamp: expect.any(String),
           userId: expect.any(Number)
         });
-
-        // Optional fields type checking if they exist
         if (settlement.subaccountId !== null) {
           expect(typeof settlement.subaccountId).toBe('number');
         }
-      }
+      });
     });
   });
-}); 
+  
+});

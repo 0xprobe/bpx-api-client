@@ -1,13 +1,6 @@
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
-import { 
-  AccountWithdrawalPayload, 
-  Balance, 
-  Deposit, 
-  TransfersRequest, 
-  MarginAccountSummary, 
-  Withdrawal 
-} from '../../../../src/http/private/capital/capital.types';
+import { AccountWithdrawalPayload, TransfersRequest, Withdrawal } from '../../../../src/http/private/capital/capital.types';
 
 describe('Capital API Tests', () => {
   let bpxClient: ReturnType<typeof createClient>;
@@ -16,8 +9,8 @@ describe('Capital API Tests', () => {
     bpxClient = createClient();
   });
 
-  describe('getBalances', () => {
-    it('should get balances successfully', async () => {
+  describe('Get balances', () => {
+    it('Retrieves account balances and the state of the balances', async () => {
       const response = await bpxClient.capital.getBalances();
       
       expect(isSuccess(response)).toBe(true);
@@ -27,18 +20,19 @@ describe('Capital API Tests', () => {
       const symbols = Object.keys(response.data);
       expect(symbols.length).toBeGreaterThan(0);
       
-      // Check structure of first symbol's balance
-      const firstSymbol = symbols[0];
-      expect(response.data[firstSymbol]).toMatchObject({
-        available: expect.any(String),
-        locked: expect.any(String),
-        staked: expect.any(String)
+      // Check structure of all symbols' balances
+      symbols.forEach(symbol => {
+        expect(response.data[symbol]).toMatchObject({
+          available: expect.any(String),
+          locked: expect.any(String),
+          staked: expect.any(String)
+        });
       });
     });
   });
 
-  describe('getCollateral', () => {
-    it('should get collateral information successfully', async () => {
+  describe('Get collateral', () => {
+    it('Retrieves collateral information for an account', async () => {
       const response = await bpxClient.capital.getCollateral();
       
       expect(isSuccess(response)).toBe(true);
@@ -66,28 +60,25 @@ describe('Capital API Tests', () => {
         netExposureFutures: expect.any(String),
         pnlUnrealized: expect.any(String),
       });
-
       // Optional fields type checking if they exist
       if (response.data.marginFraction !== null) {
         expect(typeof response.data.marginFraction).toBe('string');
       }
-
     });
   });
 
-  describe('getDeposits', () => {
-    it('should get deposits successfully', async () => {
+  describe('Get deposits', () => {
+    it('Retrieves deposit history', async () => {
       const request: TransfersRequest = {
         limit: 10,
         offset: 0
       };
       
       const response = await bpxClient.capital.getDeposits(request);
-      
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const deposit = response.data[0];
-        
+
+      // Check all deposits
+      response.data.forEach(deposit => {
         // Required fields
         expect(deposit).toMatchObject({
           id: expect.any(Number),
@@ -111,12 +102,12 @@ describe('Capital API Tests', () => {
         if (deposit.transactionHash !== null) {
           expect(typeof deposit.transactionHash).toBe('string');
         }
-      }
+      });
     });
   });
 
-  describe('getDepositAddress', () => {
-    it('should get deposit address successfully', async () => {
+  describe('Get deposit address', () => {
+    it('Retrieves the user specific deposit address on the specified blockchain', async () => {
       const blockchain = 'Ethereum';
       const response = await bpxClient.capital.getDepositAddress(blockchain);
       
@@ -124,12 +115,11 @@ describe('Capital API Tests', () => {
       expect(response.data).toMatchObject({
         address: expect.any(String)
       });
-
     });
   });
 
-  describe('getWithdrawals', () => {
-    it('should get withdrawals successfully', async () => {
+  describe('Get withdrawals', () => {
+    it('Retrieves withdrawal history', async () => {
       const params: TransfersRequest = {
         limit: 10,
         offset: 0
@@ -138,9 +128,7 @@ describe('Capital API Tests', () => {
       const response = await bpxClient.capital.getWithdrawals(params);
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const withdrawal = response.data[0];
-        
+      response.data.forEach(withdrawal => {
         // Required fields
         expect(withdrawal).toMatchObject({
           id: expect.any(Number),
@@ -153,7 +141,6 @@ describe('Capital API Tests', () => {
           createdAt: expect.any(String),
           isInternal: expect.any(Boolean)
         });
-
         // Optional fields type checking if they exist
         if (withdrawal.clientId !== null) {
           expect(typeof withdrawal.clientId).toBe('string');
@@ -167,26 +154,24 @@ describe('Capital API Tests', () => {
         if (withdrawal.transactionHash !== null) {
           expect(typeof withdrawal.transactionHash).toBe('string');
         }
-      }
+      });
     });
   });
 
-  describe('requestWithdrawal', () => {
-    it('should request withdrawal successfully', async () => {
+  // WARNING: This test requests withdrawal
+  describe.skip('Request withdrawal', () => {
+    it('Requests a withdrawal from the exchange', async () => {
       const payload: AccountWithdrawalPayload = {
-        address: '0x123...',
+        address: 'WITHDRAWAL_ADDRESS',
         blockchain: 'Solana',
         quantity: '0.01',
         symbol: 'SOL'
       };
       
       const response = await bpxClient.capital.requestWithdrawal(payload);
-      
-      expect(isSuccess(response)).toBe(false);
 
-      /*
       expect(isSuccess(response)).toBe(true);
-      const withdrawal = response.data;
+      const withdrawal = response.data as Withdrawal;
       
       // Required fields
       expect(withdrawal).toMatchObject({
@@ -213,7 +198,6 @@ describe('Capital API Tests', () => {
       if (withdrawal.transactionHash !== null) {
         expect(typeof withdrawal.transactionHash).toBe('string');
       }
-      */
     });
   });
 }); 

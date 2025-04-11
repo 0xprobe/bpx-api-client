@@ -9,15 +9,15 @@ describe('Futures API Tests', () => {
     bpxClient = createClient();
   });
 
-  describe('getOpenPositions', () => {
-    it('should get open positions successfully', async () => {
+  describe('Get open positions', () => {
+    it('Retrieves account position summary', async () => {
       const response = await bpxClient.futures.getOpenPositions();
       
       expect(isSuccess(response)).toBe(true);
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        const position = response.data[0];
-        
-        // Required fields
+      const positions = response.data as FuturePositionWithMargin[];
+      // expect(positions.length).toBeGreaterThan(0);
+
+      positions.forEach(position => {
         expect(position).toMatchObject({
           breakEvenPrice: expect.any(String),
           entryPrice: expect.any(String),
@@ -47,12 +47,11 @@ describe('Futures API Tests', () => {
           positionId: expect.any(String),
           cumulativeInterest: expect.any(String)
         });
-
         // Optional fields type checking if they exist
         if (position.subaccountId !== null) {
           expect(typeof position.subaccountId).toBe('number');
         }
-      }
+      });
     });
   });
 }); 

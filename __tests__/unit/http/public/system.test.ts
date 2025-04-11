@@ -9,8 +9,8 @@ describe('Public System API Tests', () => {
     bpxClient = createClient();
   });
 
-  describe('getSystemStatus', () => {
-    it('should return system status information', async () => {
+  describe('Status', () => {
+    it('Get the system status, and the status message, if any', async () => {
       const response = await bpxClient.system.status();
       
       expect(isSuccess(response)).toBe(true);
@@ -18,20 +18,22 @@ describe('Public System API Tests', () => {
       expect(response.data).toMatchObject({
         status: expect.stringMatching(/^(Ok|Maintenance)$/)
       });
-      expect(response.data.message === null || typeof response.data.message === 'string').toBe(true);
+      if (response.data.message !== null) {
+        expect(typeof response.data.message).toBe('string');
+      }
     });
   });
 
-  describe('ping', () => {
-    it('should return pong', async () => {
+  describe('Ping', () => {
+    it('Responds with pong', async () => {
       const response = await bpxClient.system.ping();
       expect(isSuccess(response)).toBe(true);
       expect(response.data).toBe('pong');
     });
   });   
 
-  describe('getSystemTime', () => {
-    it('should return current system time', async () => {
+  describe('Get system time', () => {
+    it('Retrieves the current system time', async () => {
       const response = await bpxClient.system.getSystemTime();
       
       expect(isSuccess(response)).toBe(true);

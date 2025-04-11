@@ -59,7 +59,8 @@ const accountResponse = await client.account.getAccount();
 console.log(accountResponse.data);
 ```
 
-All HTTP requests, responses, and parameters are defined as types in the library, allowing for strict type checking.
+All HTTP requests, responses, and parameters are defined as types within the library, enabling strict type checking.
+Type definitions strictly follow the official OpenAPI specification: `blob:https://docs.backpack.exchange/494f0c88-4b30-4d33-b591-397eea947d11`
 
 ```typescript
 // Example with type annotations
@@ -83,9 +84,9 @@ All HTTP API responses follow the `ApiResponse` interface:
 
 ```typescript
 export interface ApiResponse<T> {
-  statusCode: number;                                 // HTTP status code
-  data: T | Record<string, never>;                    // Success case: actual data, Failure case: empty object
-  error: ApiErrorResponse | Record<string, never>;    // Success case: empty object, Failure case: error details
+  statusCode: number;                              // HTTP status code
+  data: T | Record<string, never>;                 // Success : actual data, Failure : empty object
+  error: ApiErrorResponse | Record<string, never>; // Success : empty object, Failure : error details
 }
 
 export interface ApiErrorResponse {

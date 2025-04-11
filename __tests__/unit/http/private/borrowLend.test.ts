@@ -10,16 +10,20 @@ describe('Borrow Lend API Tests', () => {
     bpxClient = createClient();
   });
 
-  describe.only('getBorrowLendPositions', () => {
-    it('should get borrow lend positions successfully', async () => {
+  describe('Get borrow lend positions', () => {
+    it('Retrieves all the open borrow lending positions for the account', async () => {
 
       const response = await bpxClient.borrowLend.getBorrowLendPositions();
       
       expect(isSuccess(response)).toBe(true);
+      expect(response.data).toBeDefined();
+      expect(Array.isArray(response.data)).toBe(true);
+      
+      const positions = response.data as BorrowLendPositionWithMargin[];
+      // expect(positions.length).toBeGreaterThan(0);
 
-      if (Array.isArray(response.data) && response.data.length > 0) {
-
-        expect(response.data).toMatchObject([{
+      response.data.forEach(position => {
+        expect(position).toMatchObject({
           cumulativeInterest: expect.any(String),
           id: expect.any(String),
           imf: expect.any(String),
@@ -39,28 +43,30 @@ describe('Borrow Lend API Tests', () => {
           netExposureQuantity: expect.any(String),
           netExposureNotional: expect.any(String),
           symbol: expect.any(String)
-        }]);
-
-        const firstPosition = response.data[0];
-        expect(firstPosition.imfFunction.type).toBe('sqrt');
-        expect(firstPosition.mmfFunction.type).toBe('sqrt');
-      }
-
+        });
+      });
     });
   });
 
-  describe('executeBorrowLend', () => {
-    it('should execute borrow lend successfully', async () => {
+  // WARNING: This test executes borrow/lend
+  describe.skip('Execute borrow lend', () => {
+    it('Executes a borrow of 0.0001 BTC', async () => {
       const payload: BorrowLendExecutePayload = {
         quantity: '0.0001',
-        side: BorrowLendSide.Borrow, // 'Lend'
+        side: BorrowLendSide.Borrow,
         symbol: 'BTC'
       };
       
       const response = await bpxClient.borrowLend.executeBorrowLend(payload);
       
       expect(isSuccess(response)).toBe(true);
-
+      expect(response.data).toBeDefined();
+      expect(response.data).toMatchObject({
+        id: expect.any(String),
+        quantity: payload.quantity,
+        side: payload.side,
+        symbol: payload.symbol
+      });
     });
   });
 });
