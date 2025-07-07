@@ -4,6 +4,7 @@ export const API_ENDPOINT_INSTRUCTION_MAP: Record<string, string> = {
   // Account
   [`${HttpMethod.GET}:/api/v1/account`]: 'accountQuery',
   [`${HttpMethod.PATCH}:/api/v1/account`]: 'accountUpdate',
+  [`${HttpMethod.POST}:/api/v1/account/convertDust`]: 'convertDust',
   [`${HttpMethod.GET}:/api/v1/account/limits/borrow`]: 'maxBorrowQuantity',
   [`${HttpMethod.GET}:/api/v1/account/limits/order`]: 'maxOrderQuantity',
   [`${HttpMethod.GET}:/api/v1/account/limits/withdrawal`]: 'maxWithdrawalQuantity',
@@ -27,16 +28,21 @@ export const API_ENDPOINT_INSTRUCTION_MAP: Record<string, string> = {
   [`${HttpMethod.GET}:/wapi/v1/history/borrowLend`]: 'borrowHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/interest`]: 'interestHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/borrowLend/positions`]: 'borrowPositionHistoryQueryAll',
+  [`${HttpMethod.GET}:/wapi/v1/history/dust`]: 'dustHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/fills`]: 'fillHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/funding`]: 'fundingHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/orders`]: 'orderHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/pnl`]: 'pnlHistoryQueryAll',
+  [`${HttpMethod.GET}:/wapi/v1/history/rfq`]: 'rfqHistoryQueryAll',
+  [`${HttpMethod.GET}:/wapi/v1/history/quotes`]: 'quoteHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/settlement`]: 'settlementHistoryQueryAll',
+  [`${HttpMethod.GET}:/wapi/v1/history/strategies`]: 'strategyHistoryQueryAll',
 
   // Order
   [`${HttpMethod.GET}:/api/v1/order`]: 'orderQuery',
   [`${HttpMethod.POST}:/api/v1/order`]: 'orderExecute',
   [`${HttpMethod.DELETE}:/api/v1/order`]: 'orderCancel',
+  [`${HttpMethod.POST}:/api/v1/orders`]: 'orderExecute',
   [`${HttpMethod.GET}:/api/v1/orders`]: 'orderQueryAll',
   [`${HttpMethod.DELETE}:/api/v1/orders`]: 'orderCancelAll',
 

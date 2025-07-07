@@ -33,7 +33,6 @@ export class BpxHttpHandler {
       let headers: Record<string, string> = {};
 
       if (instruction) {
-
         const signedHeaders = BpxSigner.generateHttpAuthSignature(
           this.auth.verifyingKey,
           this.auth.signingKey,
@@ -80,15 +79,22 @@ export class BpxHttpHandler {
         console.log('=========================');
       }
 
-      if (!response.ok) {
-        return {
-          statusCode: response.status,
-          data: {},
-          error: {
-            code: data.code || 'UNKNOWN_ERROR',
-            message: data.message || 'Unknown error occurred'
+      if (!response.ok) {  
+        let errorCode = 'UNKNOWN_ERROR';
+        let errorMessage = 'Unknown error occurred';
+        
+        if (typeof data === 'object' && data !== null) {
+          errorCode = data.code || errorCode;
+          errorMessage = data.message || errorMessage;
+        } else if (typeof data === 'string') {
+          try {
+            const parsed = JSON.parse(data);
+            errorCode = parsed.code || errorCode;
+            errorMessage = parsed.message || errorMessage;
+          } catch (e) {
+            errorMessage = data;
           }
-        };
+        }
       }
 
       return {

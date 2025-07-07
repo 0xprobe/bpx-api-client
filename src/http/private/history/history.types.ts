@@ -1,4 +1,5 @@
 import { MarketType, SelfTradePrevention, Side, TimeInForce, BorrowLendSide } from "../../common/common.types";
+import { OrderStatus } from "../order/order.types";
 
 export interface BorrowHistoryRequest {
   type?: BorrowLendEventType;
@@ -7,6 +8,7 @@ export interface BorrowHistoryRequest {
   symbol?: string;
   limit?: number;
   offset?: number;
+  sortDirection?: 'Asc' | 'Desc';
 }
 
 export enum BorrowLendEventType {
@@ -49,6 +51,7 @@ export interface InterestHistoryRequest {
   limit?: number;
   offset?: number;
   source?: InterestPaymentSource;
+  sortDirection?: 'Asc' | 'Desc';
 }
 
 export enum InterestPaymentSource {
@@ -73,6 +76,7 @@ export interface BorrowPositionHistoryRequest {
   state?: BorrowLendPositionState;
   limit?: number;
   offset?: number;
+  sortDirection?: 'Asc' | 'Desc';
 }
 
 export enum BorrowLendPositionState {
@@ -89,6 +93,22 @@ export interface BorrowLendPositionRow {
   avgInterestRate: string;
   side: BorrowLendSide;
   createdAt: string;
+}
+
+export interface DustConversionHistoryRequest {
+  id?: number;
+  symbol?: string;
+  limit?: number;
+  offset?: number;
+  sortDirection?: 'Asc' | 'Desc';
+}
+
+export interface DustConversion {
+  id: number;
+  quantity: string;
+  symbol: string;
+  usdcReceived: string;
+  timestamp: string;
 }
 
 export interface FillHistoryRequest {
@@ -224,6 +244,53 @@ export interface PnlPayment {
   symbol: string;
   timestamp: string;
 }
+export interface RfqHistoryRequest {
+  rfqId?: string;
+  symbol?: string;
+  status?: OrderStatus;
+  side?: Side;
+  limit?: number;
+  offset?: number;
+  sortDirection?: 'Asc' | 'Desc';
+}
+
+export interface RfqHistory {
+  userId: number;
+  subaccountId: number | null;
+  rfqId: string;
+  clientId: number | null;
+  symbol: string;
+  side: Side;
+  price: string;
+  quantity: string;
+  quoteQuantity: string;
+  submissionTime: string;
+  expiryTime: string;
+  status: OrderStatus;
+  executionMode: 'AwaitAccept';
+  createdAt: string;
+}
+
+export interface QuoteHistoryRequest {
+  quoteId?: string;
+  symbol?: string;
+  status?: OrderStatus;
+  limit?: number;
+  offset?: number;
+  sortDirection?: 'Asc' | 'Desc';
+}
+
+export interface QuoteHistory {
+  userId: number;
+  subaccountId: number | null;
+  rfqId: string;
+  quoteId: string;
+  clientId: number | null;
+  bidPrice: string;
+  askPrice: string;
+  status: OrderStatus;
+  createdAt: string;
+}
 
 export interface SettlementHistoryRequest {
   limit?: number;
@@ -263,4 +330,31 @@ export enum SettlementSource {
   BackstopProviderLiquidation = 'BackstopProviderLiquidation',
   BackstopAdlLiquidation = 'BackstopAdlLiquidation',
   BackstopLiquidityFundProceeds = 'BackstopLiquidityFundProceeds'
+}
+
+export interface StrategyHistoryRequest {
+  strategyId?: string;
+  symbol?: string;
+  limit?: number;
+  offset?: number;
+  marketType?: MarketType[];
+  sortDirection?: 'Asc' | 'Desc';
+}
+export interface StrategyHistory {
+  id: string;
+  createdAt: string;
+  executedQuantity: string | null;
+  executedQuoteQuantity: string | null;
+  cancelReason: OrderExpiryReason | null;
+  strategyType: string;
+  quantity: string;
+  selfTradePrevention: SelfTradePrevention;
+  status: string;
+  side: Side;
+  symbol: string;
+  timeInForce: TimeInForce;
+  clientStrategyId?: number;
+  duration?: number;
+  interval?: number;
+  randomizedIntervalQuantity?: boolean;
 }

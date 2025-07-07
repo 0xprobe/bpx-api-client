@@ -21,6 +21,10 @@ export class OrderApi {
     return this.httpHandler.execute<OpenOrder>(HttpMethod.DELETE, '/api/v1/order', body);
   }
 
+  async executeOrders(body: OrderExecutePayload[]) {
+    return this.httpHandler.execute<OpenOrder[]>(HttpMethod.POST, '/api/v1/orders', body);
+  }
+
   //https://docs.backpack.exchange/#tag/Order/operation/get_open_orders
   async getOpenOrders(queryParams: OpenOrdersRequest) {
     return this.httpHandler.execute<OpenOrder[]>(HttpMethod.GET, '/api/v1/orders', queryParams);

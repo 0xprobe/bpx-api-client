@@ -1,4 +1,4 @@
-import { BorrowHistoryRequest, BorrowLendMovement, BorrowLendPositionRow, BorrowPositionHistoryRequest, FillHistoryRequest, FundingPayment, FundingPaymentsRequest, InterestHistoryRequest, InterestPayment, Order, OrderFill, OrderHistoryRequest, PnlPayment, ProfitAndLossHistoryRequest, Settlement, SettlementHistoryRequest } from '../../../../src/http/private/history/history.types';
+import { BorrowHistoryRequest, BorrowLendMovement, BorrowLendPositionRow, BorrowPositionHistoryRequest, DustConversion, DustConversionHistoryRequest, FillHistoryRequest, FundingPayment, FundingPaymentsRequest, InterestHistoryRequest, InterestPayment, Order, OrderFill, OrderHistoryRequest, PnlPayment, ProfitAndLossHistoryRequest, QuoteHistory, QuoteHistoryRequest, RfqHistoryRequest, Settlement, SettlementHistoryRequest, StrategyHistory, StrategyHistoryRequest } from '../../../../src/http/private/history/history.types';
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
 
@@ -96,6 +96,33 @@ describe('History API Tests', () => {
       });
     });
   });
+
+  // describe('Get dust conversion history', () => {
+  //   it('History of dust conversion operations for the account', async () => {
+  //     const request: DustConversionHistoryRequest = {
+  //       limit: 10,
+  //       offset: 0
+  //     };
+      
+  //     const response = await bpxClient.history.getDustConversionHistory(request);
+  //     console.log('Dust Conversion History Response:', response);
+      
+  //     expect(isSuccess(response)).toBe(true);
+  //     const conversions = response.data as DustConversion[];
+  //     // expect(conversions.length).toBeGreaterThan(0);
+
+  //     conversions.forEach(conversion => {
+  //       expect(conversion).toMatchObject({
+  //         id: expect.any(Number),
+  //         symbol: expect.any(String),
+  //         quantity: expect.any(String),
+  //         convertedSymbol: expect.any(String),
+  //         convertedQuantity: expect.any(String),
+  //         timestamp: expect.any(String)
+  //       });
+  //     });
+  //   });
+  // });
 
   describe('Get fill history', () => {
     it('Retrieves historical fills, with optional filtering for a specific order or symbol', async () => {
@@ -261,6 +288,62 @@ describe('History API Tests', () => {
     });
   });
 
+  // describe('Get RFQ history', () => {
+  //   it('Retrieves the RFQ history for the user', async () => {
+  //     const request: RfqHistoryRequest = {
+  //       limit: 10,
+  //       offset: 0
+  //     };
+      
+  //     const response = await bpxClient.history.getRfqHistory(request);
+  //     console.log('RFQ History Response:', response);
+      
+  //     expect(isSuccess(response)).toBe(true);
+  //     const rfqs = response.data as any[]; // Adjust type as needed
+  //     // expect(rfqs.length).toBeGreaterThan(0);
+
+  //     rfqs.forEach(rfq => {
+  //       expect(rfq).toMatchObject({
+  //         rfqId: expect.any(String),
+  //         symbol: expect.any(String),
+  //         status: expect.any(String),
+  //         side: expect.any(String),
+  //         timestamp: expect.any(String)
+  //       });
+  //     });
+  //   });
+  // });
+
+  // describe('Get quote history', () => {
+  //   it('Retrieves the quote history for the user', async () => {
+  //     const request: QuoteHistoryRequest = {
+  //       limit: 10,
+  //       offset: 0
+  //     };
+      
+  //     const response = await bpxClient.history.getQuoteHistory(request);
+  //     console.log('Quote History Response:', response);
+      
+  //     expect(isSuccess(response)).toBe(true);
+  //     const quotes = response.data as QuoteHistory[];
+  //     // expect(quotes.length).toBeGreaterThan(0);
+
+  //     quotes.forEach(quote => {
+  //       expect(quote).toMatchObject({
+  //         userId: expect.any(Number),
+  //         subaccountId: expect.any(Number),
+  //         quoteId: expect.any(String),
+  //         clientId: expect.any(Number),
+  //         symbol: expect.any(String),
+  //         side: expect.any(String),
+  //         price: expect.any(String),
+  //         quantity: expect.any(String),
+  //         timestamp: expect.any(String)
+  //       });
+  //     });
+  //   });
+  // });
+
   describe('Get settlement history', () => {
     it('History of settlement operations for the account', async () => {
       const request: SettlementHistoryRequest = {
@@ -284,6 +367,31 @@ describe('History API Tests', () => {
         if (settlement.subaccountId !== null) {
           expect(typeof settlement.subaccountId).toBe('number');
         }
+      });
+    });
+  });
+
+  describe('Get strategy history', () => {
+    it('History of strategies for the account', async () => {
+      const request: StrategyHistoryRequest = {
+        limit: 10,
+        offset: 0
+      };
+      
+      const response = await bpxClient.history.getStrategyHistory(request);
+      
+      expect(isSuccess(response)).toBe(true);
+      const strategies = response.data as StrategyHistory[];
+      // expect(strategies.length).toBeGreaterThan(0);
+
+      strategies.forEach(strategy => {
+        expect(strategy).toMatchObject({
+          id: expect.any(Number),
+          name: expect.any(String),
+          description: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String)
+        });
       });
     });
   });

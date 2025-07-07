@@ -86,7 +86,11 @@ describe('Capital API Tests', () => {
           status: expect.any(String),
           symbol: expect.any(String),
           quantity: expect.any(String),
-          createdAt: expect.any(String)
+          createdAt: expect.any(String),
+          fiatAmount: expect.any(Number),
+          fiatCurrency: expect.any(String),
+          institutionBic: expect.any(String),
+          platformMemo: expect.any(String),
         });
 
         // Optional fields type checking if they exist
@@ -135,11 +139,19 @@ describe('Capital API Tests', () => {
           blockchain: expect.any(String),
           quantity: expect.any(String),
           fee: expect.any(String),
+          fiatFee: expect.any(String),
+          fiatState: expect.any(String),
+          fiatSymbol: expect.any(String),
+          providerId: expect.any(String),
           symbol: expect.any(String),
           status: expect.any(String),
           toAddress: expect.any(String),
           createdAt: expect.any(String),
-          isInternal: expect.any(Boolean)
+          isInternal: expect.any(Boolean),
+          bankName: expect.any(String),
+          bankIdentifier: expect.any(String),
+          accountIdentifier: expect.any(String),
+          triggerAt: expect.any(String)
         });
         // Optional fields type checking if they exist
         if (withdrawal.clientId !== null) {
