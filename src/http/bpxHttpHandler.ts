@@ -95,6 +95,14 @@ export class BpxHttpHandler {
             errorMessage = data;
           }
         }
+        return {
+          statusCode: response.status,
+          data: {},
+          error: {
+            code: errorCode,
+            message: errorMessage
+          }
+        };
       }
 
       return {

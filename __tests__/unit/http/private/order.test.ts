@@ -307,7 +307,6 @@ describe('Order API Tests', () => {
       
       expect(isSuccess(response)).toBe(true);
       const orders = response.data as OpenOrder[];
-      
       expect(orders.length).toBe(2);
     });
   });

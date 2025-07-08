@@ -9,17 +9,32 @@ export class BpxSigner {
     apiKey: string,
     apiSecret: string,
     instruction: string,
-    body: Record<string, any>
+    body: Record<string, any> | Record<string, any>[]
   ): Record<string, string> {
-    
-    const bodyEntries = Object.entries(body)
-      .filter(
-        ([, value]) => value !== undefined && JSON.stringify(value) !== 'null'
-      )
-      .map(([k, v]) => [k, v.toString()])
-      .sort(([a], [b]) => a.localeCompare(b));
+     let bodyEntries;
 
-    bodyEntries.unshift(['instruction', instruction]);
+    if (Array.isArray(body)) {
+      bodyEntries = body.flatMap((entry) => {
+        const entries = Object.entries(entry)
+          .filter(
+            ([, value]) => value !== undefined && JSON.stringify(value) !== 'null'
+          )
+          .map(([k, v]) => [k, typeof v === 'string' ? v : String(v)])
+          .sort(([a], [b]) => a.localeCompare(b));
+
+        entries.unshift(['instruction', instruction]);
+        return entries;
+      });
+    } else {
+      bodyEntries = Object.entries(body)
+        .filter(
+          ([, value]) => value !== undefined && JSON.stringify(value) !== 'null'
+        )
+        .map(([k, v]) => [k, v.toString()])
+        .sort(([a], [b]) => a.localeCompare(b));
+
+      bodyEntries.unshift(['instruction', instruction]);
+    }
 
     const timestamp = String(Date.now());
     const window = String(SIGNATURE_EXPIRATION_TIME_MS);
