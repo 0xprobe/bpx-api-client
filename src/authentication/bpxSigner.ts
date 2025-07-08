@@ -11,28 +11,23 @@ export class BpxSigner {
     instruction: string,
     body: Record<string, any> | Record<string, any>[]
   ): Record<string, string> {
-     let bodyEntries;
+    const processEntries = (obj: Record<string, any>): [string, string][] => {
+      return Object.entries(obj)
+        .filter(([, value]) => value !== undefined && JSON.stringify(value) !== 'null')
+        .map(([k, v]) => [k, typeof v === 'string' ? v : String(v)] as [string, string])
+        .sort(([a], [b]) => a.localeCompare(b));
+    };
+
+    let bodyEntries: [string, string][];
 
     if (Array.isArray(body)) {
       bodyEntries = body.flatMap((entry) => {
-        const entries = Object.entries(entry)
-          .filter(
-            ([, value]) => value !== undefined && JSON.stringify(value) !== 'null'
-          )
-          .map(([k, v]) => [k, typeof v === 'string' ? v : String(v)])
-          .sort(([a], [b]) => a.localeCompare(b));
-
+        const entries = processEntries(entry);
         entries.unshift(['instruction', instruction]);
         return entries;
       });
     } else {
-      bodyEntries = Object.entries(body)
-        .filter(
-          ([, value]) => value !== undefined && JSON.stringify(value) !== 'null'
-        )
-        .map(([k, v]) => [k, v.toString()])
-        .sort(([a], [b]) => a.localeCompare(b));
-
+      bodyEntries = processEntries(body);
       bodyEntries.unshift(['instruction', instruction]);
     }
 
