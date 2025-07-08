@@ -1,4 +1,3 @@
-import { MarketAsset, CollateralSummary } from '../../../../src/http/public/assets/assets.types';
 import { ApiResponse, isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
 import { UpdateAccountRequest, MaxOrderQuantityRequest, MaxWithdrawalQuantityRequest, MaxOrderQuantity, AccountSummary, MaxWithdrawalQuantity } from '../../../../src/http/private/account/account.types';

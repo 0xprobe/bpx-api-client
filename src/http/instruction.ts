@@ -34,7 +34,7 @@ export const API_ENDPOINT_INSTRUCTION_MAP: Record<string, string> = {
   [`${HttpMethod.GET}:/wapi/v1/history/orders`]: 'orderHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/pnl`]: 'pnlHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/rfq`]: 'rfqHistoryQueryAll',
-  [`${HttpMethod.GET}:/wapi/v1/history/quotes`]: 'quoteHistoryQueryAll',
+  [`${HttpMethod.GET}:/wapi/v1/history/quote`]: 'quoteHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/settlement`]: 'settlementHistoryQueryAll',
   [`${HttpMethod.GET}:/wapi/v1/history/strategies`]: 'strategyHistoryQueryAll',
 

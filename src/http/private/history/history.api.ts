@@ -48,7 +48,6 @@ export class HistoryApi {
   }
 
   // https://docs.backpack.exchange/#tag/History/operation/get_rfq_history
-  // https://api.backpack.exchange/wapi/v1/history/rfq
   async getRfqHistory(queryParams: RfqHistoryRequest) {
     return this.httpHandler.execute<RfqHistory[]>(HttpMethod.GET, '/wapi/v1/history/rfq', queryParams);
   }
