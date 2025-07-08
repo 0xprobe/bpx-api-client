@@ -1,4 +1,4 @@
-import { MarketType, SelfTradePrevention, Side, TimeInForce, BorrowLendSide } from "../../common/common.types";
+import { MarketType, SelfTradePrevention, Side, TimeInForce, BorrowLendSide, OrderDirection } from "../../common/common.types";
 import { OrderStatus } from "../order/order.types";
 
 export interface BorrowHistoryRequest {
@@ -8,7 +8,7 @@ export interface BorrowHistoryRequest {
   symbol?: string;
   limit?: number;
   offset?: number;
-  sortDirection?: 'Asc' | 'Desc';
+  sortDirection?: OrderDirection;
 }
 
 export enum BorrowLendEventType {
@@ -51,7 +51,7 @@ export interface InterestHistoryRequest {
   limit?: number;
   offset?: number;
   source?: InterestPaymentSource;
-  sortDirection?: 'Asc' | 'Desc';
+  sortDirection?: OrderDirection;
 }
 
 export enum InterestPaymentSource {
@@ -76,7 +76,7 @@ export interface BorrowPositionHistoryRequest {
   state?: BorrowLendPositionState;
   limit?: number;
   offset?: number;
-  sortDirection?: 'Asc' | 'Desc';
+  sortDirection?: OrderDirection;
 }
 
 export enum BorrowLendPositionState {
@@ -100,7 +100,7 @@ export interface DustConversionHistoryRequest {
   symbol?: string;
   limit?: number;
   offset?: number;
-  sortDirection?: 'Asc' | 'Desc';
+  sortDirection?: OrderDirection;
 }
 
 export interface DustConversion {
@@ -251,7 +251,7 @@ export interface RfqHistoryRequest {
   side?: Side;
   limit?: number;
   offset?: number;
-  sortDirection?: 'Asc' | 'Desc';
+  sortDirection?: OrderDirection;
 }
 
 export interface RfqHistory {
@@ -277,7 +277,7 @@ export interface QuoteHistoryRequest {
   status?: OrderStatus;
   limit?: number;
   offset?: number;
-  sortDirection?: 'Asc' | 'Desc';
+  sortDirection?: OrderDirection;
 }
 
 export interface QuoteHistory {
@@ -338,7 +338,7 @@ export interface StrategyHistoryRequest {
   limit?: number;
   offset?: number;
   marketType?: MarketType[];
-  sortDirection?: 'Asc' | 'Desc';
+  sortDirection?: OrderDirection;
 }
 export interface StrategyHistory {
   id: string;
