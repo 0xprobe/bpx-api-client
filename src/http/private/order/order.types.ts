@@ -34,6 +34,7 @@ export interface MarketOrder {
   triggerQuantity: string | null;
   triggeredAt: number | null;
   relatedOrderId: string | null;
+  strategyId: string | null;
 }
 
 export interface LimitOrder {
@@ -63,6 +64,7 @@ export interface LimitOrder {
   triggerQuantity: string | null;
   triggeredAt: number | null;
   relatedOrderId: string | null;
+  strategyId: string | null;
 }
 
 export enum OrderType {

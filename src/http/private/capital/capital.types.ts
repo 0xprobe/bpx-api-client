@@ -52,6 +52,10 @@ export interface Deposit {
   symbol: string;
   quantity: string;
   createdAt: string;
+  fiatAmount: number;
+  fiatCurrency: string;
+  institutionBic: string;
+  platformMemo: string;
 }
 
 export interface DepositAddress {
@@ -65,6 +69,10 @@ export interface Withdrawal {
   identifier: string | null;
   quantity: string;
   fee: string;
+  fiatFee: string;
+  fiatState: string;
+  fiatSymbol: string;
+  providerId: string;
   symbol: string;
   status: string;
   subaccountId: number | null;
@@ -72,6 +80,10 @@ export interface Withdrawal {
   transactionHash: string | null;
   createdAt: string;
   isInternal: boolean;
+  bankName: string;
+  bankIdentifier: string;
+  accountIdentifier: string;
+  triggerAt: string;
 }
 
 export interface AccountWithdrawalPayload {

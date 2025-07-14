@@ -52,6 +52,12 @@ describe('Public Markets API Tests', () => {
         if (market.openInterestLimit !== null) {
           expect(typeof market.openInterestLimit).toBe('string');
         }
+        if (market.fundingRateUpperBound !== null) {
+          expect(typeof market.fundingRateUpperBound).toBe("string");
+        }
+        if (market.fundingRateLowerBound !== null) {
+          expect(typeof market.fundingRateLowerBound).toBe("string");
+        }
       });
     });
   });
@@ -191,7 +197,8 @@ describe('Public Markets API Tests', () => {
         symbol: BTC_USDC_PERP,
         interval: randomInterval,
         startTime: oneHourAgo,
-        endTime: now
+        endTime: now,
+        priceType: "Last"
       });
       
       expect(isSuccess(response)).toBe(true);

@@ -2,6 +2,8 @@ import { PositionImfFunction } from "../../common/common.types";
 
 export interface MarketAsset {
   symbol: string;
+  displayName: string;
+  coingeckoId: string | null;
   tokens: Token[];
 }
 

@@ -1,4 +1,3 @@
-import { MarketAsset, CollateralSummary } from '../../../../src/http/public/assets/assets.types';
 import { ApiResponse, isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
 import { UpdateAccountRequest, MaxOrderQuantityRequest, MaxWithdrawalQuantityRequest, MaxOrderQuantity, AccountSummary, MaxWithdrawalQuantity } from '../../../../src/http/private/account/account.types';
@@ -47,6 +46,13 @@ describe('Account API Tests', () => {
       
       const response = await bpxClient.account.updateAccount(settings);
       
+      expect(isSuccess(response)).toBe(true);
+    });
+  });
+
+  describe('Convert dust balance', () => {
+    it('Converts dust balance to the base asset', async () => {
+      const response = await bpxClient.account.convertDustBalance();
       expect(isSuccess(response)).toBe(true);
     });
   });

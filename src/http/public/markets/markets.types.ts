@@ -9,6 +9,8 @@ export interface Market {
   imfFunction: PositionImfFunction | null;
   mmfFunction: PositionImfFunction | null;
   fundingInterval: number | null;
+  fundingRateUpperBound: string | null;
+  fundingRateLowerBound: string | null;
   openInterestLimit: string | null;
   orderBookState: "Open" | "Closed" | "CancelOnly" | "LimitOnly" | "PostOnly";
   createdAt: string;
@@ -83,6 +85,7 @@ export interface KlineRequest {
   interval: KlineInterval;
   startTime: number;
   endTime?: number;
+  priceType?: "Last" | "Index" | "Mark";
 }
 
 export enum KlineInterval {
