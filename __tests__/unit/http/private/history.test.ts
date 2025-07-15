@@ -1,4 +1,4 @@
-import { BorrowHistoryRequest, BorrowLendMovement, BorrowLendPositionRow, BorrowPositionHistoryRequest, FillHistoryRequest, FundingPayment, FundingPaymentsRequest, InterestHistoryRequest, InterestPayment, Order, OrderFill, OrderHistoryRequest, PnlPayment, ProfitAndLossHistoryRequest, Settlement, SettlementHistoryRequest } from '../../../../src/http/private/history/history.types';
+import { BorrowHistoryRequest, BorrowLendMovement, BorrowLendPositionRow, BorrowPositionHistoryRequest, DustConversion, DustConversionHistoryRequest, FillHistoryRequest, FundingPayment, FundingPaymentsRequest, InterestHistoryRequest, InterestPayment, Order, OrderFill, OrderHistoryRequest, PnlPayment, ProfitAndLossHistoryRequest, QuoteHistorical, QuoteHistoryRequest, RequestForQuoteHistorical, RfqHistoryRequest, Settlement, SettlementHistoryRequest, Strategy, StrategyHistoryRequest } from '../../../../src/http/private/history/history.types';
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
 
@@ -97,6 +97,32 @@ describe('History API Tests', () => {
     });
   });
 
+  describe('Get dust conversion history', () => {
+    it('Retrieves the dust conversion history for the user', async () => {
+      const request: DustConversionHistoryRequest = {
+        limit: 10,
+        offset: 0
+      };
+      
+      const response = await bpxClient.history.getDustConversionHistory(request);
+      
+      expect(isSuccess(response)).toBe(true);
+      console.log(response.data);
+      const conversions = response.data as DustConversion[];
+      // expect(positions.length).toBeGreaterThan(0);
+
+      conversions.forEach(conversion => {
+        expect(conversion).toMatchObject({
+          id: expect.any(Number),
+          quantity: expect.any(String),
+          symbol: expect.any(String),
+          usdcReceived: expect.any(String),
+          timestamp: expect.any(String)
+        });
+      });
+    });
+  });
+
   describe('Get fill history', () => {
     it('Retrieves historical fills, with optional filtering for a specific order or symbol', async () => {
       const request: FillHistoryRequest = {
@@ -179,6 +205,7 @@ describe('History API Tests', () => {
       orders.forEach(order => {
         expect(order).toMatchObject({
           id: expect.any(String),
+          createdAt: expect.any(String),
           orderType: expect.any(String),
           selfTradePrevention: expect.any(String),
           status: expect.any(String),
@@ -234,6 +261,15 @@ describe('History API Tests', () => {
         if (order.triggerQuantity !== null) {
           expect(typeof order.triggerQuantity).toBe('string');
         }
+        if (order.clientId !== null) {
+          expect(typeof order.clientId).toBe('number');
+        }
+        if (order.systemOrderType !== null) {
+          expect(typeof order.systemOrderType).toBe('string');
+        }
+        if (order.strategyId !== null) {
+          expect(typeof order.strategyId).toBe('string');
+        }
       });
     });
   });
@@ -261,6 +297,85 @@ describe('History API Tests', () => {
     });
   });
 
+  describe('Get Rfq history', () => {
+    it('Retrieves the rfq history for the user', async () => {
+      const request: RfqHistoryRequest = {
+        limit: 10,
+        offset: 0
+      };
+      
+      const response = await bpxClient.history.getRfqHistory(request);
+
+      expect(isSuccess(response)).toBe(true);
+      const rfqs = response.data as RequestForQuoteHistorical[];
+      // expect(rfqs.length).toBeGreaterThan(0);
+
+      rfqs.forEach(rfq => {
+        expect(rfq).toMatchObject({
+          userId: expect.any(Number),
+          rfqId: expect.any(String),
+          symbol: expect.any(String),
+          side: expect.any(String),
+          submissionTime: expect.any(String),
+          expiryTime: expect.any(String),
+          status: expect.any(String),
+          executionMode: expect.any(String),
+          createdAt: expect.any(String)
+        });
+        if (rfq.subaccountId !== null) {
+          expect(typeof rfq.subaccountId).toBe('number');
+        }
+        if (rfq.clientId !== null) {
+          expect(typeof rfq.clientId).toBe('number');
+        }
+        if (rfq.price !== null) {
+          expect(typeof rfq.price).toBe('string');
+        }
+        if (rfq.quantity !== null) {
+          expect(typeof rfq.quantity).toBe('string');
+        }
+        if (rfq.quoteQuantity !== null) {
+          expect(typeof rfq.quoteQuantity).toBe('string');
+        }
+      });
+    });
+  });
+
+  describe('Get quote history', () => {
+    it('Retrieves the quote history for the user', async () => {
+      const request: QuoteHistoryRequest = {
+        limit: 10,
+        offset: 0
+      };
+      
+      const response = await bpxClient.history.getQuoteHistory(request);
+
+      expect(isSuccess(response)).toBe(true);
+      const quotes = response.data as QuoteHistorical[];
+      // expect(quotes.length).toBeGreaterThan(0);
+
+      quotes.forEach(quote => {
+        expect(quote).toMatchObject({
+          userId: expect.any(Number),
+          rfqId: expect.any(String),
+          quoteId: expect.any(String),
+          symbol: expect.any(String),
+          side: expect.any(String),
+          bidPrice: expect.any(String),
+          askPrice: expect.any(String),
+          status: expect.any(String),
+          createdAt: expect.any(String)
+        });
+        if (quote.subaccountId !== null) {
+          expect(typeof quote.subaccountId).toBe('number');
+        }
+        if (quote.clientId !== null) {
+          expect(typeof quote.clientId).toBe('number');
+        }
+      });
+    });
+  });
+
   describe('Get settlement history', () => {
     it('History of settlement operations for the account', async () => {
       const request: SettlementHistoryRequest = {
@@ -283,6 +398,52 @@ describe('History API Tests', () => {
         });
         if (settlement.subaccountId !== null) {
           expect(typeof settlement.subaccountId).toBe('number');
+        }
+      });
+    });
+  });
+
+  describe('Get strategy history', () => {
+    it('Retrieves the strategy history for the user', async () => {
+      const request: StrategyHistoryRequest = {
+        limit: 10,
+        offset: 0
+      };
+      
+      const response = await bpxClient.history.getStrategyHistory(request);
+      
+      expect(isSuccess(response)).toBe(true);
+      const strategies = response.data as Strategy[];
+      // expect(strategies.length).toBeGreaterThan(0);
+
+      strategies.forEach(strategy => {
+        expect(strategy).toMatchObject({
+          id: expect.any(String),
+          createdAt: expect.any(String),
+          strategyType: expect.any(String),
+          selfTradePrevention: expect.any(String),
+          status: expect.any(String),
+          side: expect.any(String),
+          symbol: expect.any(String),
+          timeInForce: expect.any(String),
+          duration: expect.any(Number),
+          interval: expect.any(Number),
+          randomizedIntervalQuantity: expect.any(Boolean)
+        });
+        if (strategy.executedQuantity !== null) {
+          expect(typeof strategy.executedQuantity).toBe('string');
+        }
+        if (strategy.executedQuoteQuantity !== null) {
+          expect(typeof strategy.executedQuoteQuantity).toBe('string');
+        }
+        if (strategy.cancelReason !== null) {
+          expect(typeof strategy.cancelReason).toBe('string');
+        }
+        if (strategy.quantity !== null) {
+          expect(typeof strategy.quantity).toBe('string');
+        }
+        if (strategy.clientStrategyId !== null) {
+          expect(typeof strategy.clientStrategyId).toBe('number');
         }
       });
     });

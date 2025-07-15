@@ -5,15 +5,16 @@ import { BpxHttpHandler } from '../../bpxHttpHandler';
 export class MarketsApi {
 
   constructor(private httpHandler: BpxHttpHandler) {}
+
+  
+  // https://docs.backpack.exchange/#tag/Markets/operation/get_markets
+  async getMarkets() {
+    return this.httpHandler.execute<Market[]>(HttpMethod.GET, '/api/v1/markets');
+  }
   
   // https://docs.backpack.exchange/#tag/Markets/operation/get_market
   async getMarket(symbol: string) {
     return this.httpHandler.execute<Market>(HttpMethod.GET, '/api/v1/market', { symbol });
-  }
-
-  // https://docs.backpack.exchange/#tag/Markets/operation/get_markets
-  async getMarkets() {
-    return this.httpHandler.execute<Market[]>(HttpMethod.GET, '/api/v1/markets');
   }
 
   // https://docs.backpack.exchange/#tag/Markets/operation/get_ticker

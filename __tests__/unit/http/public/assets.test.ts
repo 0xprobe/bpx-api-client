@@ -23,12 +23,17 @@ describe('Public Assets API Tests', () => {
       assets.forEach(asset => {
         expect(asset).toMatchObject({
           symbol: expect.any(String),
-          tokens: expect.arrayContaining([])
+          displayName: expect.any(String),
+          tokens: expect.arrayContaining([]),
         });
+        if (asset.coingeckoId !== null) {
+          expect(typeof asset.coingeckoId).toBe("string");
+        }
         
         if (asset.tokens.length > 0) {
           asset.tokens.forEach(token => {
             expect(token).toMatchObject({
+              displayName: expect.any(String),
               blockchain: expect.any(String),
               depositEnabled: expect.any(Boolean),
               minimumDeposit: expect.any(String),

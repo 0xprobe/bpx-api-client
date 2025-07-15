@@ -9,17 +9,28 @@ export class BpxSigner {
     apiKey: string,
     apiSecret: string,
     instruction: string,
-    body: Record<string, any>
+    body: Record<string, any> | Record<string, any>[]
   ): Record<string, string> {
-    
-    const bodyEntries = Object.entries(body)
-      .filter(
-        ([, value]) => value !== undefined && JSON.stringify(value) !== 'null'
-      )
-      .map(([k, v]) => [k, v.toString()])
-      .sort(([a], [b]) => a.localeCompare(b));
+    const processEntries = (obj: Record<string, any>): [string, string][] => {
+      return Object.entries(obj)
+        .filter(([, value]) => value !== undefined && JSON.stringify(value) !== 'null')
+        .map(([k, v]) => [k, typeof v === 'string' ? v : String(v)] as [string, string])
+        .sort(([a], [b]) => a.localeCompare(b));
+    };
 
-    bodyEntries.unshift(['instruction', instruction]);
+    let bodyEntries: [string, string][];
+
+    if (Array.isArray(body)) {
+      bodyEntries = body.flatMap((entry) => {
+        const entries = processEntries(entry);
+        entries.unshift(['instruction', instruction]);
+        return entries;
+      });
+    } else {
+      bodyEntries = processEntries(body);
+      bodyEntries.unshift(['instruction', instruction]);
+    }
+
 
     const timestamp = String(Date.now());
     const window = String(SIGNATURE_EXPIRATION_TIME_MS);
@@ -27,6 +38,7 @@ export class BpxSigner {
     bodyEntries.push(['timestamp', timestamp], ['window', window]);
 
     const msg = bodyEntries.map(([k, v]) => `${k}=${v}`).join('&');
+    // console.log(msg);
     const base64Signature = this.sign(msg, apiSecret);
 
     const headers = {

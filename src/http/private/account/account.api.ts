@@ -16,6 +16,11 @@ export class AccountApi {
       return this.httpHandler.execute<AccountSummary>(HttpMethod.PATCH, '/api/v1/account', body);
   }
 
+  // https://docs.backpack.exchange/#tag/Account/operation/convert_dust
+  async convertDustBalance(symbol?: string) {
+      return this.httpHandler.execute<void>(HttpMethod.POST, '/api/v1/account/convertDust', { symbol });
+  }
+
   // https://docs.backpack.exchange/#tag/Account/operation/get_max_borrow_quantity
   async getMaxBorrowQuantity(symbol: string) {
       return this.httpHandler.execute<MaxBorrowQuantity>(HttpMethod.GET, '/api/v1/account/limits/borrow', { symbol });

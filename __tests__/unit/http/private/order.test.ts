@@ -17,14 +17,14 @@ describe('Order API Tests', () => {
         symbol: 'SOL_USDC',
         side: Side.Bid,
         orderType: OrderType.Limit,
-        quantity: '0.07',
-        price: '95',
+        quantity: '0.05',
+        price: '150',
         timeInForce: TimeInForce.GTC,
         postOnly: true
       };
       
       const response = await bpxClient.order.executeOrder(payload);
-      
+
       expect(isSuccess(response)).toBe(true);
       const order = response.data as OpenOrder;
       
@@ -83,6 +83,9 @@ describe('Order API Tests', () => {
       }
       if (order.relatedOrderId !== null) {
         expect(typeof order.relatedOrderId).toBe('string');
+      }
+      if (order.strategyId !== null) {
+        expect(typeof order.strategyId).toBe('string');
       }
 
       // MarketOrder specific fields
@@ -274,6 +277,37 @@ describe('Order API Tests', () => {
           quantity: expect.any(String)
         });
       }
+    });
+  });
+
+  describe('Execute multiple orders', () => {
+    it('Submits multiple orders to the matching engine for execution', async () => {
+      const payload: OrderExecutePayload[] = [
+        {
+          symbol: 'SOL_USDC',
+          side: Side.Bid,
+          orderType: OrderType.Limit,
+          quantity: '0.05',
+          price: '150',
+          timeInForce: TimeInForce.GTC,
+          postOnly: true
+        },
+        {
+          symbol: 'SOL_USDC',
+          side: Side.Ask,
+          orderType: OrderType.Limit,
+          quantity: '0.05',
+          price: '170',
+          timeInForce: TimeInForce.GTC,
+          postOnly: true
+        }
+      ];
+      
+      const response = await bpxClient.order.executeOrders(payload);
+      
+      expect(isSuccess(response)).toBe(true);
+      const orders = response.data as OpenOrder[];
+      expect(orders.length).toBe(2);
     });
   });
 

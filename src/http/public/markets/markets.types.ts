@@ -9,14 +9,24 @@ export interface Market {
   imfFunction: PositionImfFunction | null;
   mmfFunction: PositionImfFunction | null;
   fundingInterval: number | null;
+  fundingRateUpperBound: string | null;
+  fundingRateLowerBound: string | null;
   openInterestLimit: string | null;
-  orderBookState: "Open" | "Closed" | "CancelOnly" | "LimitOnly" | "PostOnly";
+  orderBookState: OrderBookState;
   createdAt: string;
 }
 
 export interface OrderBookFilters {
   price: PriceFilter;
   quantity: QuantityFilter;
+}
+
+export enum OrderBookState {
+  Open = "Open",
+  Closed = "Closed",
+  CancelOnly = "CancelOnly",
+  LimitOnly = "LimitOnly",
+  PostOnly = "PostOnly"
 }
 
 export interface PriceFilter {
@@ -72,8 +82,8 @@ export interface Ticker {
 }
 
 export interface Depth {
-  bids: [string, string][];
   asks: [string, string][];
+  bids: [string, string][];
   lastUpdateId: string;
   timestamp: number;
 }
@@ -83,6 +93,7 @@ export interface KlineRequest {
   interval: KlineInterval;
   startTime: number;
   endTime?: number;
+  priceType?: KlinePriceType;
 }
 
 export enum KlineInterval {
@@ -101,6 +112,12 @@ export enum KlineInterval {
   ThreeDays = '3d',
   OneWeek = '1w',
   OneMonth = '1month'
+}
+
+export enum KlinePriceType {
+  Last = "Last",
+  Index = "Index",
+  Mark = "Mark"
 }
 
 export interface Kline {

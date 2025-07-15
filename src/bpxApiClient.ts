@@ -20,6 +20,7 @@ import { StreamsApi } from './websocket/streams.api';
 
 // Authentication
 import { BpxCredentials } from './authentication/bpxCredentials';
+import { RequestForQuoteApi } from './http/private/requestForQuote/requestForQuote.api';
 
 export class BpxApiClient {
 
@@ -37,6 +38,7 @@ export class BpxApiClient {
   public readonly futures: FuturesApi;
   public readonly history: HistoryApi;
   public readonly order: OrderApi;
+  public readonly rfq: RequestForQuoteApi;
 
   public readonly streams: StreamsApi;
 
@@ -59,6 +61,7 @@ export class BpxApiClient {
     this.futures = new FuturesApi(httpHandler);
     this.history = new HistoryApi(httpHandler);
     this.order = new OrderApi(httpHandler);
+    this.rfq = new RequestForQuoteApi(httpHandler);
 
     // WebSocket APIs
     this.streams = new StreamsApi(this.auth, { wsUrl: config.wsUrl, debug: config.debug });

@@ -34,3 +34,8 @@ export enum BorrowLendSide {
     Borrow = 'Borrow',
     Lend = 'Lend'
 }
+
+export enum SortDirection {
+    Asc = 'Asc',
+    Desc = 'Desc'
+}
