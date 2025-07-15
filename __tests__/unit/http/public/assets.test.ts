@@ -33,6 +33,7 @@ describe('Public Assets API Tests', () => {
         if (asset.tokens.length > 0) {
           asset.tokens.forEach(token => {
             expect(token).toMatchObject({
+              displayName: expect.any(String),
               blockchain: expect.any(String),
               depositEnabled: expect.any(Boolean),
               minimumDeposit: expect.any(String),

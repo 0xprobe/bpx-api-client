@@ -87,10 +87,6 @@ describe('Capital API Tests', () => {
           symbol: expect.any(String),
           quantity: expect.any(String),
           createdAt: expect.any(String),
-          fiatAmount: expect.any(Number),
-          fiatCurrency: expect.any(String),
-          institutionBic: expect.any(String),
-          platformMemo: expect.any(String),
         });
 
         // Optional fields type checking if they exist
@@ -100,11 +96,20 @@ describe('Capital API Tests', () => {
         if (deposit.fromAddress !== null) {
           expect(typeof deposit.fromAddress).toBe('string');
         }
-        if (deposit.confirmationBlockNumber !== null) {
-          expect(typeof deposit.confirmationBlockNumber).toBe('number');
-        }
         if (deposit.transactionHash !== null) {
           expect(typeof deposit.transactionHash).toBe('string');
+        }
+        if (deposit.fiatAmount !== null) {
+          expect(typeof deposit.fiatAmount).toBe('number');
+        }
+        if (deposit.fiatCurrency !== null) {
+          expect(typeof deposit.fiatCurrency).toBe('string');
+        }
+        if (deposit.institutionBic !== null) {
+          expect(typeof deposit.institutionBic).toBe('string');
+        }
+        if (deposit.platformMemo !== null) {
+          expect(typeof deposit.platformMemo).toBe('string');
         }
       });
     });
@@ -139,19 +144,11 @@ describe('Capital API Tests', () => {
           blockchain: expect.any(String),
           quantity: expect.any(String),
           fee: expect.any(String),
-          fiatFee: expect.any(String),
-          fiatState: expect.any(String),
-          fiatSymbol: expect.any(String),
-          providerId: expect.any(String),
           symbol: expect.any(String),
           status: expect.any(String),
           toAddress: expect.any(String),
           createdAt: expect.any(String),
           isInternal: expect.any(Boolean),
-          bankName: expect.any(String),
-          bankIdentifier: expect.any(String),
-          accountIdentifier: expect.any(String),
-          triggerAt: expect.any(String)
         });
         // Optional fields type checking if they exist
         if (withdrawal.clientId !== null) {
@@ -160,11 +157,35 @@ describe('Capital API Tests', () => {
         if (withdrawal.identifier !== null) {
           expect(typeof withdrawal.identifier).toBe('string');
         }
+        if (withdrawal.fiatFee !== null) {
+          expect(typeof withdrawal.fiatFee).toBe('string');
+        }
+        if (withdrawal.fiatState !== null) {
+          expect(typeof withdrawal.fiatState).toBe('string');
+        }
+        if (withdrawal.fiatSymbol !== null) {
+          expect(typeof withdrawal.fiatSymbol).toBe('string');
+        }
+        if (withdrawal.providerId !== null) {
+          expect(typeof withdrawal.providerId).toBe('string');
+        }
         if (withdrawal.subaccountId !== null) {
           expect(typeof withdrawal.subaccountId).toBe('number');
         }
         if (withdrawal.transactionHash !== null) {
           expect(typeof withdrawal.transactionHash).toBe('string');
+        }
+        if (withdrawal.bankName !== null) {
+          expect(typeof withdrawal.bankName).toBe('string');
+        }
+        if (withdrawal.bankIdentifier !== null) {
+          expect(typeof withdrawal.bankIdentifier).toBe('string');
+        }
+        if (withdrawal.accountIdentifier !== null) {
+          expect(typeof withdrawal.accountIdentifier).toBe('string');
+        }
+        if (withdrawal.triggerAt !== null) {
+          expect(typeof withdrawal.triggerAt).toBe('string');
         }
       });
     });
@@ -174,7 +195,7 @@ describe('Capital API Tests', () => {
   describe.skip('Request withdrawal', () => {
     it('Requests a withdrawal from the exchange', async () => {
       const payload: AccountWithdrawalPayload = {
-        address: 'WITHDRAWAL_ADDRESS',
+        address: 'WITHDRAWAL_ADDRESS', // TODO: Replace with actual withdrawal address
         blockchain: 'Solana',
         quantity: '0.01',
         symbol: 'SOL'

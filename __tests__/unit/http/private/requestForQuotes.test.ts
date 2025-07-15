@@ -1,4 +1,5 @@
-import { CancelQuoteRequest, RefreshQuoteRequest, SubmitQuoteRequest, SubmitRFQRequest } from "../../../../src/http/private/requestForQuote/requestForQuote.types";
+import { Side } from "../../../../src/http/common/common.types";
+import { QuoteAcceptPayload, RequestForQuoteCancelPayload, RequestForQuoteRefreshPayload, RequestForQuote, QuotePayload, Quote, RequestForQuotePayload, RfqExecutionMode } from "../../../../src/http/private/requestForQuote/requestForQuote.types";
 import { createClient } from "../../setup";
 
 describe('Request for Quote API Tests', () => {
@@ -10,10 +11,10 @@ describe('Request for Quote API Tests', () => {
 
     describe('Submit Request for Quote', () => {
         it('Submits a request for quote', async () => {
-            const payload: SubmitRFQRequest = {
+            const payload: RequestForQuotePayload = {
                 symbol: 'SOL_USDC_RFQ',
-                side: 'Bid',
-                executionMode: 'AwaitAccept'
+                side: Side.Bid,
+                executionMode: RfqExecutionMode.AwaitAccept
             };  
             const response = await bpxClient.rfq.submitRequestForQuote(payload);
             expect(response).toBeDefined();
@@ -23,7 +24,7 @@ describe('Request for Quote API Tests', () => {
 
     describe('Accept Quote', () => {
         it('Accepts a quote for a request for quote', async () => {
-            const payload = {
+            const payload: QuoteAcceptPayload = {
                 rfqId: '12345',
                 quoteId: '67890'
             };
@@ -36,7 +37,7 @@ describe('Request for Quote API Tests', () => {
 
     describe('Refresh Quote', () => {
         it('Refreshes a quote for a request for quote', async () => {
-            const body: RefreshQuoteRequest = 
+            const body: RequestForQuoteRefreshPayload = 
             {
                 rfqId: '12345'
             };
@@ -50,7 +51,7 @@ describe('Request for Quote API Tests', () => {
 
     describe('Cancel Request for Quote', () => {
         it('Cancels a request for quote', async () => {
-            const payload: CancelQuoteRequest = {
+            const payload: RequestForQuoteCancelPayload = {
                 rfqId: '12345'
             };
         
@@ -62,7 +63,7 @@ describe('Request for Quote API Tests', () => {
 
     describe('Submit Quote', () => {
         it('Submits a quote for a request for quote', async () => {
-            const payload: SubmitQuoteRequest = {
+            const payload: QuotePayload = {
                 rfqId: '12345',
                 bidPrice: '49000',
                 askPrice: '51000'

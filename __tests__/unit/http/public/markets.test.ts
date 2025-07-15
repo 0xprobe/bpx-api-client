@@ -1,4 +1,4 @@
-import { Depth, FundingIntervalRates, Kline, KlineInterval, Market, MarkPrice, OpenInterest, Ticker, TickerInterval } from '../../../../src/http/public/markets/markets.types';
+import { Depth, FundingIntervalRates, Kline, KlineInterval, KlinePriceType, Market, MarkPrice, OpenInterest, Ticker, TickerInterval } from '../../../../src/http/public/markets/markets.types';
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
 
@@ -198,7 +198,7 @@ describe('Public Markets API Tests', () => {
         interval: randomInterval,
         startTime: oneHourAgo,
         endTime: now,
-        priceType: "Last"
+        priceType: KlinePriceType.Last
       });
       
       expect(isSuccess(response)).toBe(true);

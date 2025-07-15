@@ -45,7 +45,6 @@ export interface Deposit {
   id: number;
   toAddress: string | null;
   fromAddress: string | null;
-  confirmationBlockNumber: number | null;
   source: string;
   status: string;
   transactionHash: string | null;

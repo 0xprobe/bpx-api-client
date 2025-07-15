@@ -6,7 +6,7 @@ export class AssetsApi {
 
   constructor(private httpHandler: BpxHttpHandler) {}
   
-  // https://docs.backpack.exchange/#tag/Markets/operation/get_market
+  // https://docs.backpack.exchange/#tag/Assets/operation/get_assets
   async getAssets() {
     return this.httpHandler.execute<MarketAsset[]>(HttpMethod.GET, '/api/v1/assets');
   }

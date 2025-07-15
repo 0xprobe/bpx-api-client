@@ -31,12 +31,14 @@ export class BpxSigner {
       bodyEntries.unshift(['instruction', instruction]);
     }
 
+
     const timestamp = String(Date.now());
     const window = String(SIGNATURE_EXPIRATION_TIME_MS);
 
     bodyEntries.push(['timestamp', timestamp], ['window', window]);
 
     const msg = bodyEntries.map(([k, v]) => `${k}=${v}`).join('&');
+    // console.log(msg);
     const base64Signature = this.sign(msg, apiSecret);
 
     const headers = {

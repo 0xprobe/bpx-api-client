@@ -17,14 +17,14 @@ describe('Order API Tests', () => {
         symbol: 'SOL_USDC',
         side: Side.Bid,
         orderType: OrderType.Limit,
-        quantity: '0.07',
-        price: '95',
+        quantity: '0.05',
+        price: '150',
         timeInForce: TimeInForce.GTC,
         postOnly: true
       };
       
       const response = await bpxClient.order.executeOrder(payload);
-      
+
       expect(isSuccess(response)).toBe(true);
       const order = response.data as OpenOrder;
       
@@ -288,7 +288,7 @@ describe('Order API Tests', () => {
           side: Side.Bid,
           orderType: OrderType.Limit,
           quantity: '0.05',
-          price: '90',
+          price: '150',
           timeInForce: TimeInForce.GTC,
           postOnly: true
         },
@@ -297,7 +297,7 @@ describe('Order API Tests', () => {
           side: Side.Ask,
           orderType: OrderType.Limit,
           quantity: '0.05',
-          price: '100',
+          price: '170',
           timeInForce: TimeInForce.GTC,
           postOnly: true
         }

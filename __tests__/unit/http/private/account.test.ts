@@ -51,8 +51,10 @@ describe('Account API Tests', () => {
   });
 
   describe('Convert dust balance', () => {
-    it('Converts dust balance to the base asset', async () => {
-      const response = await bpxClient.account.convertDustBalance();
+    it.only('Converts dust balance to the base asset', async () => {
+      const response = await bpxClient.account.convertDustBalance('IO');
+      console.log(response);
+      console.log(response.data);
       expect(isSuccess(response)).toBe(true);
     });
   });

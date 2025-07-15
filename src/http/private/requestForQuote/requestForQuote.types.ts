@@ -1,56 +1,64 @@
-export interface SubmitRFQRequest {
+import { Side } from "../../common/common.types";
+import { OrderStatus } from "../order/order.types";
+
+export interface RequestForQuotePayload {
     clientId?: number;
     quantity?: string;
     quoteQuantity?: string;
     price?: string;
     symbol: string;
-    side: 'Bid' | 'Ask';
-    executionMode?: 'AwaitAccept' | 'Immediate';
+    side: Side;
+    executionMode?: RfqExecutionMode;
 }
 
-export interface RFQResponse {
+export interface RequestForQuote {
     rfqId: string;
-    clientId: number;
+    clientId: number | null;
     symbol: string;
-    side: 'Bid' | 'Ask';
-    price: string;
-    quantity: string;
-    quoteQuantity?: string;
+    side: Side;
+    price: string | null;
+    quantity: string | null;
+    quoteQuantity: string | null;
     submissionTime: number;
     expiryTime: number;
-    status: 'Pending' | 'Accepted' | 'Rejected' | 'Cancelled';
-    executionMode?: 'AwaitAccept' | 'Immediate';
+    status: OrderStatus;
+    executionMode?: RfqExecutionMode;
     createdAt: number;
 }
 
-export interface AcceptQuoteRequest {
+export enum RfqExecutionMode {
+    AwaitAccept = 'AwaitAccept',
+    Immediate = 'Immediate'
+}
+
+export interface QuoteAcceptPayload {
     rfqId?: string;
     clientId?: number;
     quoteId: string;
 }
 
-export interface RefreshQuoteRequest {
+export interface RequestForQuoteRefreshPayload {
     rfqId: string;
 }
 
-export interface CancelQuoteRequest {
+export interface RequestForQuoteCancelPayload {
     rfqId?: string;
     clientId?: number;
 }
 
-export interface SubmitQuoteRequest {
+export interface QuotePayload {
     rfqId: string;
     clientId?: number;
     bidPrice: string;
     askPrice: string;
 }
 
-export interface SubmitQuoteResponse {
+export interface Quote {
     rfqId: string;
     quoteId: string;
-    clientId: number;
+    clientId: number | null;
     bidPrice: string;
     askPrice: string;
-    status: 'Pending' | 'Accepted' | 'Rejected' | 'Cancelled';
+    status: OrderStatus;
     createdAt: number;
 }

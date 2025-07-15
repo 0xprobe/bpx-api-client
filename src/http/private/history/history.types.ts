@@ -1,4 +1,4 @@
-import { MarketType, SelfTradePrevention, Side, TimeInForce, BorrowLendSide, OrderDirection } from "../../common/common.types";
+import { MarketType, SelfTradePrevention, Side, TimeInForce, BorrowLendSide, SortDirection } from "../../common/common.types";
 import { OrderStatus } from "../order/order.types";
 
 export interface BorrowHistoryRequest {
@@ -8,7 +8,7 @@ export interface BorrowHistoryRequest {
   symbol?: string;
   limit?: number;
   offset?: number;
-  sortDirection?: OrderDirection;
+  sortDirection?: SortDirection;
 }
 
 export enum BorrowLendEventType {
@@ -51,7 +51,7 @@ export interface InterestHistoryRequest {
   limit?: number;
   offset?: number;
   source?: InterestPaymentSource;
-  sortDirection?: OrderDirection;
+  sortDirection?: SortDirection;
 }
 
 export enum InterestPaymentSource {
@@ -76,7 +76,7 @@ export interface BorrowPositionHistoryRequest {
   state?: BorrowLendPositionState;
   limit?: number;
   offset?: number;
-  sortDirection?: OrderDirection;
+  sortDirection?: SortDirection;
 }
 
 export enum BorrowLendPositionState {
@@ -100,7 +100,7 @@ export interface DustConversionHistoryRequest {
   symbol?: string;
   limit?: number;
   offset?: number;
-  sortDirection?: OrderDirection;
+  sortDirection?: SortDirection;
 }
 
 export interface DustConversion {
@@ -188,12 +188,12 @@ export interface Order {
   executedQuoteQuantity: string | null;
   expiryReason: OrderExpiryReason | null;
   orderType: OrderTypeEnum;
-  postOnly?: boolean;
-  price?: string;
-  quantity?: string;
-  quoteQuantity?: string;
+  postOnly: boolean | null;
+  price: string | null;
+  quantity: string | null;
+  quoteQuantity: string | null;
   selfTradePrevention: SelfTradePrevention;
-  status: string;
+  status: OrderStatus;
   side: Side;
   stopLossTriggerPrice: string | null;
   stopLossLimitPrice: string | null;
@@ -206,6 +206,9 @@ export interface Order {
   triggerBy: string | null;
   triggerPrice: string | null;
   triggerQuantity: string | null;
+  clientId: number | null;
+  systemOrderType: SystemOrderType | null;
+  strategyId: string | null;
 }
 
 export enum OrderExpiryReason {
@@ -237,6 +240,7 @@ export interface ProfitAndLossHistoryRequest {
   symbol?: string;
   limit?: number;
   offset?: number;
+  sortDirection?: SortDirection;
 }
 
 export interface PnlPayment {
@@ -251,10 +255,10 @@ export interface RfqHistoryRequest {
   side?: Side;
   limit?: number;
   offset?: number;
-  sortDirection?: OrderDirection;
+  sortDirection?: SortDirection;
 }
 
-export interface RfqHistory {
+export interface RequestForQuoteHistorical {
   userId: number;
   subaccountId: number | null;
   rfqId: string;
@@ -277,10 +281,10 @@ export interface QuoteHistoryRequest {
   status?: OrderStatus;
   limit?: number;
   offset?: number;
-  sortDirection?: OrderDirection;
+  sortDirection?: SortDirection;
 }
 
-export interface QuoteHistory {
+export interface QuoteHistorical {
   userId: number;
   subaccountId: number | null;
   rfqId: string;
@@ -338,23 +342,51 @@ export interface StrategyHistoryRequest {
   limit?: number;
   offset?: number;
   marketType?: MarketType[];
-  sortDirection?: OrderDirection;
+  sortDirection?: SortDirection;
 }
-export interface StrategyHistory {
+export interface Strategy {
   id: string;
   createdAt: string;
   executedQuantity: string | null;
   executedQuoteQuantity: string | null;
-  cancelReason: OrderExpiryReason | null;
-  strategyType: string;
+  cancelReason: StrategyCrankCancelReason | null;
+  strategyType: StrategyTypeEnum;
   quantity: string;
   selfTradePrevention: SelfTradePrevention;
-  status: string;
+  status: StrategyStatus;
   side: Side;
   symbol: string;
   timeInForce: TimeInForce;
   clientStrategyId?: number;
-  duration?: number;
-  interval?: number;
-  randomizedIntervalQuantity?: boolean;
+  duration: number;
+  interval: number;
+  randomizedIntervalQuantity: boolean;
+}
+
+export enum StrategyCrankCancelReason {
+  Expired = 'Expired',
+  FillOrKill = 'FillOrKill',
+  InsufficientBorrowableQuantity = 'InsufficientBorrowableQuantity',
+  InsufficientFunds = 'InsufficientFunds',
+  InsufficientLiquidity = 'InsufficientLiquidity',
+  InvalidPrice = 'InvalidPrice',
+  InvalidQuantity = 'InvalidQuantity',
+  InsufficientMargin = 'InsufficientMargin',
+  Liquidation = 'Liquidation',
+  PriceOutOfBounds = 'PriceOutOfBounds',
+  ReduceOnlyNotReduced = 'ReduceOnlyNotReduced',
+  SelfTradePrevention = 'SelfTradePrevention',
+  Unknown = 'Unknown',
+  UserPermissions = 'UserPermissions'
+}
+
+export enum StrategyTypeEnum {
+  Scheduled = 'Scheduled'
+}
+
+export enum StrategyStatus {
+  Running = 'Running',
+  Completed = 'Completed',
+  Cancelled = 'Cancelled',
+  Terminated = 'Terminated'
 }

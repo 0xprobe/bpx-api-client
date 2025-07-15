@@ -8,6 +8,7 @@ export interface MarketAsset {
 }
 
 export interface Token {
+    displayName: string;
     blockchain: string;
     contractAddress: string | null;
     depositEnabled: boolean;

@@ -2,6 +2,20 @@
 
 A TypeScript client library for the Backpack Exchange API, written by 0xprobe.
 
+## Changelog
+
+### [0.1.2] - 2025-07-15
+- Supports new API endpoints
+- Enhanced test code and added additional test cases for new endpoints
+- Updated bpxSigner to support array type body for executing multiple orders
+- Minor bug fixes and code refactoring
+
+### [0.1.1] - 2025-04-09
+- Added export for common.types
+
+### [0.1.0] - 2025-04-08
+- First official release of the project
+
 ## Installation
 
 ```bash
@@ -60,7 +74,7 @@ console.log(accountResponse.data);
 ```
 
 All HTTP requests, responses, and parameters are defined as types within the library, enabling strict type checking.
-Type definitions strictly follow the official OpenAPI specification: `blob:https://docs.backpack.exchange/494f0c88-4b30-4d33-b591-397eea947d11`
+Type definitions strictly follow the official OpenAPI specification: `blob:https://docs.backpack.exchange/bc5f44ac-fc90-480b-877f-df1bdb15c3a2`
 
 ```typescript
 // Example with type annotations
@@ -180,7 +194,7 @@ The client provides access to all Backpack Exchange REST API endpoints:
  - futures
  - history
  - order
- - Request For Quote (to be implemented)
+ - Request For Quote
 
 ### WebSocket API
 

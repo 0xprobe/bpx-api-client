@@ -1,6 +1,6 @@
 import { HttpMethod } from '../../common/api.types';
 
-import { BorrowLendMovement, BorrowLendPositionRow, BorrowHistoryRequest, InterestHistoryRequest, BorrowPositionHistoryRequest, FillHistoryRequest, OrderFill, InterestPayment, FundingPaymentsRequest, FundingPayment, OrderHistoryRequest, Order, ProfitAndLossHistoryRequest, PnlPayment, SettlementHistoryRequest, Settlement, DustConversionHistoryRequest, DustConversion, RfqHistoryRequest, RfqHistory, QuoteHistory, QuoteHistoryRequest, StrategyHistory, StrategyHistoryRequest } from './history.types';
+import { BorrowLendMovement, BorrowLendPositionRow, BorrowHistoryRequest, InterestHistoryRequest, BorrowPositionHistoryRequest, FillHistoryRequest, OrderFill, InterestPayment, FundingPaymentsRequest, FundingPayment, OrderHistoryRequest, Order, ProfitAndLossHistoryRequest, PnlPayment, SettlementHistoryRequest, Settlement, DustConversionHistoryRequest, DustConversion, RfqHistoryRequest, RequestForQuoteHistorical, QuoteHistorical, QuoteHistoryRequest, Strategy, StrategyHistoryRequest } from './history.types';
 import { BpxHttpHandler } from '../../bpxHttpHandler';
 
 export class HistoryApi {
@@ -49,12 +49,12 @@ export class HistoryApi {
 
   // https://docs.backpack.exchange/#tag/History/operation/get_rfq_history
   async getRfqHistory(queryParams: RfqHistoryRequest) {
-    return this.httpHandler.execute<RfqHistory[]>(HttpMethod.GET, '/wapi/v1/history/rfq', queryParams);
+    return this.httpHandler.execute<RequestForQuoteHistorical[]>(HttpMethod.GET, '/wapi/v1/history/rfq', queryParams);
   }
 
   // https://docs.backpack.exchange/#tag/History/operation/get_quote_history
   async getQuoteHistory(queryParams: QuoteHistoryRequest) {
-    return this.httpHandler.execute<QuoteHistory[]>(HttpMethod.GET, '/wapi/v1/history/quote', queryParams);
+    return this.httpHandler.execute<QuoteHistorical[]>(HttpMethod.GET, '/wapi/v1/history/quote', queryParams);
   }
 
   // https://docs.backpack.exchange/#tag/History/operation/get_settlement_history
@@ -64,7 +64,7 @@ export class HistoryApi {
 
   // https://docs.backpack.exchange/#tag/History/operation/get_strategies_history
   async getStrategyHistory(queryParams: StrategyHistoryRequest) {
-    return this.httpHandler.execute<StrategyHistory[]>(HttpMethod.GET, '/wapi/v1/history/strategies', queryParams);
+    return this.httpHandler.execute<Strategy[]>(HttpMethod.GET, '/wapi/v1/history/strategies', queryParams);
   }
 
 }

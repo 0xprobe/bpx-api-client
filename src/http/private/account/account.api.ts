@@ -17,7 +17,6 @@ export class AccountApi {
   }
 
   // https://docs.backpack.exchange/#tag/Account/operation/convert_dust
-  // symbol = asset to convert dust for. If omitted, all dust balances will be converted.
   async convertDustBalance(symbol?: string) {
       return this.httpHandler.execute<void>(HttpMethod.POST, '/api/v1/account/convertDust', { symbol });
   }
