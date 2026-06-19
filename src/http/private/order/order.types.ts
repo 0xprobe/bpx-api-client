@@ -130,3 +130,111 @@ export enum CancelOrderTypeEnum {
   RestingLimitOrder = 'RestingLimitOrder',
   ConditionalOrder = 'ConditionalOrder'
 }
+
+export interface FillHistoryRequest {
+  orderId?: string;
+  from?: number;
+  to?: number;
+  symbol?: string;
+  limit?: number;
+  offset?: number;
+  fillType?: FillType;
+  marketType?: MarketType[];
+}
+
+export enum FillType {
+  User = 'User',
+  BookLiquidation = 'BookLiquidation',
+  Adl = 'Adl',
+  Backstop = 'Backstop',
+  Liquidation = 'Liquidation',
+  AllLiquidation = 'AllLiquidation',
+  CollateralConversion = 'CollateralConversion',
+  CollateralConversionAndSpotLiquidation = 'CollateralConversionAndSpotLiquidation'
+}
+
+export interface OrderFill {
+  clientId: string | null;
+  fee: string;
+  feeSymbol: string;
+  isMaker: boolean;
+  orderId: string;
+  price: string;
+  quantity: string;
+  side: Side;
+  symbol: string;
+  systemOrderType?: SystemOrderType;
+  timestamp: string;
+  tradeId?: number;
+}
+
+export enum SystemOrderType {
+  CollateralConversion = 'CollateralConversion',
+  FutureExpiry = 'FutureExpiry',
+  LiquidatePositionOnAdl = 'LiquidatePositionOnAdl',
+  LiquidatePositionOnBook = 'LiquidatePositionOnBook',
+  LiquidatePositionOnBackstop = 'LiquidatePositionOnBackstop',
+  OrderBookClosed = 'OrderBookClosed'
+}
+
+export interface OrderHistoryRequest {
+  orderId?: string;
+  symbol?: string;
+  limit?: number;
+  offset?: number;
+  marketType?: MarketType[];
+}
+
+export interface Order {
+  id: string;
+  createdAt: string;
+  executedQuantity: string | null;
+  executedQuoteQuantity: string | null;
+  expiryReason: OrderExpiryReason | null;
+  orderType: OrderTypeEnum;
+  postOnly: boolean | null;
+  price: string | null;
+  quantity: string | null;
+  quoteQuantity: string | null;
+  selfTradePrevention: SelfTradePrevention;
+  status: OrderStatus;
+  side: Side;
+  stopLossTriggerPrice: string | null;
+  stopLossLimitPrice: string | null;
+  stopLossTriggerBy: string | null;
+  symbol: string;
+  takeProfitTriggerPrice: string | null;
+  takeProfitLimitPrice: string | null;
+  takeProfitTriggerBy: string | null;
+  timeInForce: TimeInForce;
+  triggerBy: string | null;
+  triggerPrice: string | null;
+  triggerQuantity: string | null;
+  clientId: number | null;
+  systemOrderType: SystemOrderType | null;
+  strategyId: string | null;
+}
+
+export enum OrderExpiryReason {
+  AccountTradingSuspended = 'AccountTradingSuspended',
+  FillOrKill = 'FillOrKill',
+  InsufficientBorrowableQuantity = 'InsufficientBorrowableQuantity',
+  InsufficientFunds = 'InsufficientFunds',
+  InsufficientLiquidity = 'InsufficientLiquidity',
+  InvalidPrice = 'InvalidPrice',
+  InvalidQuantity = 'InvalidQuantity',
+  ImmediateOrCancel = 'ImmediateOrCancel',
+  InsufficientMargin = 'InsufficientMargin',
+  Liquidation = 'Liquidation',
+  PostOnlyTaker = 'PostOnlyTaker',
+  ReduceOnlyNotReduced = 'ReduceOnlyNotReduced',
+  SelfTradePrevention = 'SelfTradePrevention',
+  PriceImpact = 'PriceImpact',
+  Unknown = 'Unknown',
+  UserPermissions = 'UserPermissions'
+}
+
+export enum OrderTypeEnum {
+  Market = 'Market',
+  Limit = 'Limit'
+}

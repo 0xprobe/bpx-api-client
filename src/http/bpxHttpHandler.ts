@@ -21,10 +21,31 @@ export class BpxHttpHandler {
     try {
       let url = uri;
       if (body && method === HttpMethod.GET) {
-        const queryString = new URLSearchParams(
-          Object.entries(body).map(([key, value]) => [key, String(value)])
-        ).toString();
-        url = `${uri}${url.includes('?') ? '&' : '?'}${queryString}`;
+        // Build the query string while:
+        // - dropping undefined/null params (otherwise they get serialized as the
+        //   literal strings "undefined"/"null" and the server rejects them), and
+        // - expanding arrays into repeated keys (e.g. marketType=SPOT&marketType=PERP)
+        //   as required by the API (style=form, explode=true). The comma-joined
+        //   form is rejected by the server with a 400.
+        // This also keeps the sent query in sync with the signed payload, since
+        // BpxSigner applies the same normalization; otherwise the signature would
+        // not match the request.
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(body)) {
+          if (value === undefined || value === null) continue;
+          if (Array.isArray(value)) {
+            for (const item of value) {
+              if (item === undefined || item === null) continue;
+              params.append(key, String(item));
+            }
+          } else {
+            params.append(key, String(value));
+          }
+        }
+        const queryString = params.toString();
+        if (queryString) {
+          url = `${uri}${url.includes('?') ? '&' : '?'}${queryString}`;
+        }
       }
 
       const instruction = API_ENDPOINT_INSTRUCTION_MAP[`${method}:${uri}`];

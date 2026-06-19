@@ -39,3 +39,7 @@ export enum SortDirection {
     Asc = 'Asc',
     Desc = 'Desc'
 }
+
+// CustodyAsset is a 7000+ value enum in the OpenAPI spec; represented as a
+// string here to match how asset symbols are handled elsewhere in this client.
+export type CustodyAsset = string;

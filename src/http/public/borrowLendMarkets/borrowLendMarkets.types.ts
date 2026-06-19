@@ -1,3 +1,5 @@
+import { CustodyAsset } from "../../common/common.types";
+
 export interface BorrowLendMarket {
   state: BorrowLendBookState;
   assetMarkPrice: string;
@@ -43,4 +45,25 @@ export interface BorrowLendHistory {
   lentQuantity: string;
   timestamp: string;
   utilization: string;
+}
+
+export interface ApyRatesRequest {
+  tierId?: number;
+}
+
+export interface ApyRates {
+  borrowLend: BorrowLendApyRate[];
+  staking: StakingApyRate[];
+}
+
+export interface BorrowLendApyRate {
+  symbol: CustodyAsset;
+  borrowRate: string;
+  lendRate: string;
+}
+
+export interface StakingApyRate {
+  symbol: string;
+  dilutionFactor: string;
+  stakingRate: string;
 }

@@ -1,4 +1,5 @@
-export { BpxApiClient } from './bpxApiClient';
+export { BpxApiClient, BpxConfig } from './bpxApiClient';
+export { isSuccess } from './http/bpxHttpHandler';
 
 export * from './authentication/bpxCredentials';
 export * from './authentication/bpxSigner';
@@ -12,6 +13,7 @@ export * from './http/public/borrowLendMarkets/borrowLendMarkets.types';
 export * from './http/private/account/account.types';
 export * from './http/private/capital/capital.types';
 export * from './http/private/order/order.types';
-export * from './http/private/futures/futures.types';
+export * from './http/private/position/position.types';
 export * from './http/private/borrowLend/borrowLend.types';
-export * from './http/private/history/history.types';
+export * from './http/private/rfq/rfq.types';
+export * from './http/private/strategy/strategy.types';

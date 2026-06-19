@@ -1,5 +1,5 @@
 import { HttpMethod } from '../../common/api.types';
-import { AccountWithdrawalPayload, Balance, Deposit, DepositAddress, TransfersRequest, MarginAccountSummary, Withdrawal } from './capital.types';
+import { AccountWithdrawalPayload, Balance, Deposit, DepositAddress, TransfersRequest, MarginAccountSummary, Withdrawal, DustConversionHistoryRequest, DustConversion, SettlementHistoryRequest, Settlement } from './capital.types';
 import { BpxHttpHandler } from '../../bpxHttpHandler';
 
 export class CapitalApi {
@@ -34,6 +34,21 @@ export class CapitalApi {
   // https://docs.backpack.exchange/#tag/Capital/operation/request_withdrawal
   async requestWithdrawal(body: AccountWithdrawalPayload) {
     return this.httpHandler.execute<Withdrawal>(HttpMethod.POST, '/wapi/v1/capital/withdrawals', body);
+  }
+
+  // https://docs.backpack.exchange/#tag/Capital/operation/convert_dust
+  async convertDustBalance(symbol?: string) {
+    return this.httpHandler.execute<void>(HttpMethod.POST, '/api/v1/account/convertDust', { symbol });
+  }
+
+  // https://docs.backpack.exchange/#tag/Capital/operation/get_dust_history
+  async getDustConversionHistory(queryParams: DustConversionHistoryRequest) {
+    return this.httpHandler.execute<DustConversion[]>(HttpMethod.GET, '/wapi/v1/history/dust', queryParams);
+  }
+
+  // https://docs.backpack.exchange/#tag/Capital/operation/get_settlement_history
+  async getSettlementHistory(queryParams: SettlementHistoryRequest) {
+    return this.httpHandler.execute<Settlement[]>(HttpMethod.GET, '/wapi/v1/history/settlement', queryParams);
   }
 
 }

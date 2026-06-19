@@ -1,5 +1,5 @@
 import { HttpMethod } from '../../common/api.types';
-import { StatusAndMessage } from './system.types';
+import { StatusAndMessage, WalletResponse } from './system.types';
 import { BpxHttpHandler } from '../../bpxHttpHandler';
 
 export class SystemApi {
@@ -19,6 +19,11 @@ export class SystemApi {
   // https://docs.backpack.exchange/#tag/System/operation/get_time
   async getSystemTime() {
       return this.httpHandler.execute<string>(HttpMethod.GET, '/api/v1/time');
+  }
+
+  // https://docs.backpack.exchange/#tag/System/operation/get_wallets
+  async getWallets() {
+      return this.httpHandler.execute<WalletResponse[]>(HttpMethod.GET, '/api/v1/wallets');
   }
 
 }

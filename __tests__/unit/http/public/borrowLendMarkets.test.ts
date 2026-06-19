@@ -1,4 +1,4 @@
-import { BorrowLendHistory, BorrowLendMarket, BorrowLendMarketHistoryInterval, BorrowLendBookState } from '../../../../src/http/public/borrowLendMarkets/borrowLendMarkets.types';
+import { ApyRates, BorrowLendHistory, BorrowLendMarket, BorrowLendMarketHistoryInterval, BorrowLendBookState } from '../../../../src/http/public/borrowLendMarkets/borrowLendMarkets.types';
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
 
@@ -73,5 +73,34 @@ describe('Public Borrow Lend Markets API Tests', () => {
       });
     });
   });
-  
+
+  describe('Get APY rates', () => {
+    it('Get APY rates for borrow/lend markets and staking', async () => {
+      const response = await bpxClient.borrowLendMarkets.getApyRates();
+
+      expect(isSuccess(response)).toBe(true);
+      expect(response.data).toBeDefined();
+
+      const apyRates = response.data as ApyRates;
+      expect(Array.isArray(apyRates.borrowLend)).toBe(true);
+      expect(Array.isArray(apyRates.staking)).toBe(true);
+
+      apyRates.borrowLend.forEach(rate => {
+        expect(rate).toMatchObject({
+          symbol: expect.any(String),
+          borrowRate: expect.any(String),
+          lendRate: expect.any(String)
+        });
+      });
+
+      apyRates.staking.forEach(rate => {
+        expect(rate).toMatchObject({
+          symbol: expect.any(String),
+          dilutionFactor: expect.any(String),
+          stakingRate: expect.any(String)
+        });
+      });
+    });
+  });
+
 });

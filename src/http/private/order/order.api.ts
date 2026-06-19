@@ -1,5 +1,5 @@
 import { HttpMethod } from '../../common/api.types';
-import { OrderRequest, OrderExecutePayload, OpenOrdersRequest, OrderCancelAllPayload, OpenOrder } from './order.types';
+import { OrderRequest, OrderExecutePayload, OpenOrdersRequest, OrderCancelAllPayload, OpenOrder, FillHistoryRequest, OrderFill, OrderHistoryRequest, Order } from './order.types';
 import { BpxHttpHandler } from '../../bpxHttpHandler';
 
 export class OrderApi {
@@ -35,5 +35,15 @@ export class OrderApi {
   async cancelOpenOrders(body: OrderCancelAllPayload) {
     return this.httpHandler.execute<OpenOrder[]>(HttpMethod.DELETE, '/api/v1/orders', body);
   }
-  
+
+  // https://docs.backpack.exchange/#tag/Order/operation/get_fills
+  async getFillHistory(queryParams: FillHistoryRequest) {
+    return this.httpHandler.execute<OrderFill[]>(HttpMethod.GET, '/wapi/v1/history/fills', queryParams);
+  }
+
+  // https://docs.backpack.exchange/#tag/Order/operation/get_order_history
+  async getOrderHistory(queryParams: OrderHistoryRequest) {
+    return this.httpHandler.execute<Order[]>(HttpMethod.GET, '/wapi/v1/history/orders', queryParams);
+  }
+
 }

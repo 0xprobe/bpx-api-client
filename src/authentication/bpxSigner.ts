@@ -12,10 +12,23 @@ export class BpxSigner {
     body: Record<string, any> | Record<string, any>[]
   ): Record<string, string> {
     const processEntries = (obj: Record<string, any>): [string, string][] => {
-      return Object.entries(obj)
-        .filter(([, value]) => value !== undefined && JSON.stringify(value) !== 'null')
-        .map(([k, v]) => [k, typeof v === 'string' ? v : String(v)] as [string, string])
-        .sort(([a], [b]) => a.localeCompare(b));
+      const entries: [string, string][] = [];
+      for (const [k, v] of Object.entries(obj)) {
+        if (v === undefined || v === null) continue;
+        // Expand arrays into repeated keys so the signed payload matches the
+        // query string sent on the wire (style=form, explode=true), e.g.
+        // marketType=SPOT&marketType=PERP. Array order is preserved on both sides.
+        if (Array.isArray(v)) {
+          for (const item of v) {
+            if (item === undefined || item === null) continue;
+            entries.push([k, typeof item === 'string' ? item : String(item)]);
+          }
+        } else {
+          entries.push([k, typeof v === 'string' ? v : String(v)]);
+        }
+      }
+      // Stable sort by key keeps repeated keys in their original array order.
+      return entries.sort(([a], [b]) => a.localeCompare(b));
     };
 
     let bodyEntries: [string, string][];

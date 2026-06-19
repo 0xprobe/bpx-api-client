@@ -1,3 +1,5 @@
+import { SortDirection } from "../../common/common.types";
+
 export interface Balance {
   [key: string]: {
     available: string;
@@ -94,4 +96,60 @@ export interface AccountWithdrawalPayload {
   twoFactorToken?: string;
   autoBorrow?: boolean;
   autoLendRedeem?: boolean;
+}
+
+export interface DustConversionHistoryRequest {
+  id?: number;
+  symbol?: string;
+  limit?: number;
+  offset?: number;
+  sortDirection?: SortDirection;
+}
+
+export interface DustConversion {
+  id: number;
+  quantity: string;
+  symbol: string;
+  usdcReceived: string;
+  timestamp: string;
+}
+
+export interface SettlementHistoryRequest {
+  limit?: number;
+  offset?: number;
+  source?: SettlementSourceFilter;
+}
+
+export enum SettlementSourceFilter {
+  BackstopLiquidation = 'BackstopLiquidation',
+  CulledBorrowInterest = 'CulledBorrowInterest',
+  CulledRealizePnl = 'CulledRealizePnl',
+  CulledRealizePnlBookUtilization = 'CulledRealizePnlBookUtilization',
+  FundingPayment = 'FundingPayment',
+  RealizePnl = 'RealizePnl',
+  TradingFees = 'TradingFees',
+  TradingFeesSystem = 'TradingFeesSystem'
+}
+
+export interface Settlement {
+  quantity: string;
+  source: SettlementSource;
+  subaccountId: number | null;
+  timestamp: string;
+  userId: number;
+}
+
+export enum SettlementSource {
+  TradingFees = 'TradingFees',
+  TradingFeesSystem = 'TradingFeesSystem',
+  FundingPayment = 'FundingPayment',
+  CulledBorrowInterest = 'CulledBorrowInterest',
+  CulledRealizePnlAuto = 'CulledRealizePnlAuto',
+  CulledRealizePnlBookUtilisation = 'CulledRealizePnlBookUtilisation',
+  CulledRealizePnlAccountThreshold = 'CulledRealizePnlAccountThreshold',
+  CulledRealizePnlSystemThreshold = 'CulledRealizePnlSystemThreshold',
+  RealizePnl = 'RealizePnl',
+  BackstopProviderLiquidation = 'BackstopProviderLiquidation',
+  BackstopAdlLiquidation = 'BackstopAdlLiquidation',
+  BackstopLiquidityFundProceeds = 'BackstopLiquidityFundProceeds'
 }

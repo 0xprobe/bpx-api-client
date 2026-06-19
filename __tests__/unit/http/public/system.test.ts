@@ -1,6 +1,6 @@
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
-import { Status } from '../../../../src/http/public/system/system.types';
+import { Status, WalletResponse } from '../../../../src/http/public/system/system.types';
 
 describe('Public System API Tests', () => {
   let bpxClient: ReturnType<typeof createClient>;
@@ -45,6 +45,26 @@ describe('Public System API Tests', () => {
       const serverTime = parseInt(response.data as string);
       const currentTime = Date.now();
       expect(Math.abs(serverTime - currentTime)).toBeLessThan(5000);
+    });
+  });
+
+  describe('Get wallets', () => {
+    it('Retrieves the supported wallets', async () => {
+      const response = await bpxClient.system.getWallets();
+
+      expect(isSuccess(response)).toBe(true);
+      expect(response.data).toBeDefined();
+      expect(Array.isArray(response.data)).toBe(true);
+
+      const wallets = response.data as WalletResponse[];
+      expect(wallets.length).toBeGreaterThan(0);
+
+      wallets.forEach(wallet => {
+        expect(wallet).toMatchObject({
+          blockchain: expect.any(String),
+          address: expect.any(String)
+        });
+      });
     });
   });
 }); 

@@ -50,15 +50,6 @@ describe('Account API Tests', () => {
     });
   });
 
-  describe('Convert dust balance', () => {
-    it.only('Converts dust balance to the base asset', async () => {
-      const response = await bpxClient.account.convertDustBalance('IO');
-      console.log(response);
-      console.log(response.data);
-      expect(isSuccess(response)).toBe(true);
-    });
-  });
-
   describe('Get max borrow quantity', () => {
     it('Retrieves the maxmimum quantity an account can borrow for a given asset', async () => {
       const symbol = 'SOL';
