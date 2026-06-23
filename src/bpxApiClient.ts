@@ -11,16 +11,16 @@ import { TradesApi } from './http/public/trades/trades.api';
 import { AccountApi } from './http/private/account/account.api';
 import { BorrowLendApi } from './http/private/borrowLend/borrowLend.api';
 import { CapitalApi } from './http/private/capital/capital.api';
-import { FuturesApi } from './http/private/futures/futures.api';
-import { HistoryApi } from './http/private/history/history.api';
+import { PositionApi } from './http/private/position/position.api';
 import { OrderApi } from './http/private/order/order.api';
+import { StrategyApi } from './http/private/strategy/strategy.api';
+import { RfqApi } from './http/private/rfq/rfq.api';
 
 // WebSocket APIs
 import { StreamsApi } from './websocket/streams.api';
 
 // Authentication
 import { BpxCredentials } from './authentication/bpxCredentials';
-import { RequestForQuoteApi } from './http/private/requestForQuote/requestForQuote.api';
 
 export class BpxApiClient {
 
@@ -35,10 +35,10 @@ export class BpxApiClient {
   public readonly account: AccountApi;
   public readonly borrowLend: BorrowLendApi;
   public readonly capital: CapitalApi;
-  public readonly futures: FuturesApi;
-  public readonly history: HistoryApi;
+  public readonly position: PositionApi;
   public readonly order: OrderApi;
-  public readonly rfq: RequestForQuoteApi;
+  public readonly rfq: RfqApi;
+  public readonly strategy: StrategyApi;
 
   public readonly streams: StreamsApi;
 
@@ -58,10 +58,10 @@ export class BpxApiClient {
     this.account = new AccountApi(httpHandler);
     this.borrowLend = new BorrowLendApi(httpHandler);
     this.capital = new CapitalApi(httpHandler);
-    this.futures = new FuturesApi(httpHandler);
-    this.history = new HistoryApi(httpHandler);
+    this.position = new PositionApi(httpHandler);
     this.order = new OrderApi(httpHandler);
-    this.rfq = new RequestForQuoteApi(httpHandler);
+    this.rfq = new RfqApi(httpHandler);
+    this.strategy = new StrategyApi(httpHandler);
 
     // WebSocket APIs
     this.streams = new StreamsApi(this.auth, { wsUrl: config.wsUrl, debug: config.debug });

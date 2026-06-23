@@ -2,19 +2,7 @@
 
 A TypeScript client library for the Backpack Exchange API, written by 0xprobe.
 
-## Changelog
-
-### [0.1.2] - 2025-07-15
-- Supports new API endpoints
-- Enhanced test code and added additional test cases for new endpoints
-- Updated bpxSigner to support array type body for executing multiple orders
-- Minor bug fixes and code refactoring
-
-### [0.1.1] - 2025-04-09
-- Added export for common.types
-
-### [0.1.0] - 2025-04-08
-- First official release of the project
+All requests, responses, and parameters are strongly typed. Type definitions follow the official [Backpack Exchange API](https://docs.backpack.exchange/) specification, and the client modules mirror the categories used in the official documentation.
 
 ## Installation
 
@@ -29,7 +17,6 @@ npm install bpx-api-client
 ```typescript
 import { BpxApiClient } from 'bpx-api-client';
 
-// Initialize the client
 const client = new BpxApiClient({
   apiKey: 'your-api-key',
   apiSecret: 'your-api-secret',
@@ -39,45 +26,36 @@ const client = new BpxApiClient({
 
 ### 2. HTTP API
 
-HTTP APIs are categorized according to the API specification and are called in the below format.
+HTTP APIs are grouped by category and called in the form `client.<category>.<endpoint>(params)`.
 
 ```typescript
-// Basic format
-client.categoryName.endpointName(params);
-
-// Example: executing an order
-client.order.executeOrder(payload);
-```
-
-Here are some examples of HTTP API calls:
-
-```typescript
-// Get market information
+// Get market information (public)
 const marketsResponse = await client.markets.getMarket('SOL_USDC');
 console.log(marketsResponse.data);
 
-// Execute an order
-const payload = {
+// Execute an order (authenticated)
+import { Side, OrderType, TimeInForce } from 'bpx-api-client';
+
+const orderResponse = await client.order.executeOrder({
   symbol: 'SOL_USDC',
   side: Side.Bid,
   orderType: OrderType.Limit,
   quantity: '0.07',
   price: '85',
   timeInForce: TimeInForce.GTC
-};
-const orderResponse = await client.order.executeOrder(payload);
+});
 console.log(orderResponse.data);
 
-// Get account information
+// Get account information (authenticated)
 const accountResponse = await client.account.getAccount();
 console.log(accountResponse.data);
 ```
 
-All HTTP requests, responses, and parameters are defined as types within the library, enabling strict type checking.
-Type definitions strictly follow the official OpenAPI specification: `blob:https://docs.backpack.exchange/bc5f44ac-fc90-480b-877f-df1bdb15c3a2`
+All request payloads and responses are typed, enabling strict type checking:
 
 ```typescript
-// Example with type annotations
+import { ApiResponse, Market, OrderExecutePayload, OpenOrder } from 'bpx-api-client';
+
 const response: ApiResponse<Market> = await client.markets.getMarket('SOL_USDC');
 
 const payload: OrderExecutePayload = {
@@ -88,9 +66,10 @@ const payload: OrderExecutePayload = {
   price: '85',
   timeInForce: TimeInForce.GTC
 };
-
 const orderResponse: ApiResponse<OpenOrder> = await client.order.executeOrder(payload);
 ```
+
+> See [docs/USAGE.md](docs/USAGE.md) for the full per-category method reference and examples.
 
 ## HTTP API Response Format
 
@@ -99,8 +78,8 @@ All HTTP API responses follow the `ApiResponse` interface:
 ```typescript
 export interface ApiResponse<T> {
   statusCode: number;                              // HTTP status code
-  data: T | Record<string, never>;                 // Success : actual data, Failure : empty object
-  error: ApiErrorResponse | Record<string, never>; // Success : empty object, Failure : error details
+  data: T | Record<string, never>;                 // Success: actual data, Failure: empty object
+  error: ApiErrorResponse | Record<string, never>; // Success: empty object, Failure: error details
 }
 
 export interface ApiErrorResponse {
@@ -119,10 +98,7 @@ export interface ApiErrorResponse {
     createdAt: '2025-01-21T06:34:54.691858',
     filters: { price: [Object], quantity: [Object] },
     fundingInterval: 28800000,
-    imfFunction: null,
     marketType: 'SPOT',
-    mmfFunction: null,
-    openInterestLimit: '0',
     orderBookState: 'Open',
     quoteSymbol: 'USDC',
     symbol: 'SOL_USDC'
@@ -141,64 +117,89 @@ export interface ApiErrorResponse {
 }
 ```
 
-### 3. WebSocket API
+You can use the `isSuccess` helper as a type guard:
 
 ```typescript
+import { isSuccess } from 'bpx-api-client';
+
+const response = await client.markets.getMarket('SOL_USDC');
+if (isSuccess(response)) {
+  // response.data is narrowed to Market
+  console.log(response.data.symbol);
+}
+```
+
+## WebSocket API
+
+```typescript
+import { SubscriptionType } from 'bpx-api-client';
+
 // Open WebSocket connection
 await client.streams.open();
 
-// Add message handler (action when received message from server)
+// Add message handler
 client.streams.addMessageHandler((message) => {
   console.log(JSON.stringify(message, null, 2));
 });
 
-// Subscribe to book ticker
+// Subscribe to public streams
 client.streams.bookTicker(SubscriptionType.SUBSCRIBE, 'SOL_USDC');
 
-// Subscribe to order updates
+// Subscribe to private streams (signed automatically)
 client.streams.orderUpdate(SubscriptionType.SUBSCRIBE, 'BTC_USDC');
 
 // Close WebSocket connection
 await client.streams.close();
 ```
 
-### 4. Authentication
+## Authentication
 
-All authentication and signing processes are handled inside the BpxApiClient when using private endpoints. You only need to provide your apiKey and apiSecret when initializing the client.
+All authentication and signing for private endpoints is handled inside `BpxApiClient`. You only need to provide your `apiKey` and `apiSecret` when initializing the client. Signing uses an ED25519 keypair as required by the Backpack API.
+
+## API Surface
+
+The client mirrors the categories in the official API documentation.
+
+### Public endpoints
+
+| Category | Accessor | Examples |
+|----------|----------|----------|
+| Assets | `client.assets` | `getAssets`, `getCollateral` |
+| Borrow Lend Markets | `client.borrowLendMarkets` | `getBorrowLendMarkets`, `getBorrowLendMarketsHistory`, `getApyRates` |
+| Markets | `client.markets` | `getMarkets`, `getMarket`, `getTicker`, `getDepth`, `getKlines`, `getPredictionEvents`, `getMarketSessions`, `getSecurities`, … |
+| System | `client.system` | `status`, `ping`, `getSystemTime`, `getWallets` |
+| Trades | `client.trades` | `getRecentTrades`, `getHistoricalTrades` |
+
+### Authenticated endpoints
+
+| Category | Accessor | Examples |
+|----------|----------|----------|
+| Account | `client.account` | `getAccount`, `updateAccount`, `getMaxBorrowQuantity`, … |
+| Borrow Lend | `client.borrowLend` | `getBorrowLendPositions`, `executeBorrowLend`, `getBorrowLendHistory`, `getInterestHistory`, … |
+| Capital | `client.capital` | `getBalances`, `getCollateral`, `getDeposits`, `requestWithdrawal`, `convertDustBalance`, `getDustConversionHistory`, `getSettlementHistory`, … |
+| Order | `client.order` | `executeOrder`, `getOpenOrder`, `cancelOpenOrder`, `getOpenOrders`, `getFillHistory`, `getOrderHistory`, … |
+| Position | `client.position` | `getOpenPositions`, `getFundingPayments`, `getPositionHistory` |
+| RFQ | `client.rfq` | `submitRequestForQuote`, `acceptQuote`, `getOpenRfqs`, `getRfqHistory`, `getQuoteFillHistory`, … |
+| Strategy | `client.strategy` | `getStrategy`, `getOpenStrategies`, `createStrategy`, `cancelStrategy`, `getStrategyHistory`, … |
+
+### WebSocket
+
+`client.streams` — order/position/RFQ updates, book ticker, depth, k-line, liquidation, mark price, ticker, open interest, trade.
 
 ## Features
 
-- **TypeScript Support**: Complete type definitions for all API requests and responses
-- **REST API Client**: Access to all Backpack Exchange endpoints (public and private)
-- **WebSocket Client**: Real-time data streaming for market data and account updates
-- **Authentication**: Secure API key and secret handling
-- **Error Handling**: Comprehensive error handling with detailed error messages
+- **TypeScript support** — complete type definitions for all requests and responses
+- **REST client** — public and private endpoints, grouped by official API category
+- **WebSocket client** — real-time market data and account update streams
+- **Authentication** — secure ED25519 API key/secret handling
+- **Error handling** — consistent `ApiResponse` envelope with structured error details
 
-## API Documentation
+## Documentation
 
-### HTTP API
+- [Usage guide](docs/USAGE.md) — per-category method reference and examples
+- [Migration guide](docs/MIGRATION.md) — upgrading from 0.1.x (breaking module changes)
+- [Changelog](CHANGELOG.md)
 
-The client provides access to all Backpack Exchange REST API endpoints:
+## License
 
-1) Public endpoints
- - assets
- - borrow lend markets
- - markets
- - system
- - trades
- 
-2) Private endpoints
- - account
- - borrow lend
- - capital
- - futures
- - history
- - order
- - Request For Quote
-
-### WebSocket API
-
-Real-time data streaming for:
-
-- Order update, Position update, RFQ update
-- Book ticker, Depth, K-line, Liquidation, Mark price, Ticker, Open interest, Trade
+MIT

@@ -1,4 +1,4 @@
-import { Depth, FundingIntervalRates, Kline, KlineInterval, KlinePriceType, Market, MarkPrice, OpenInterest, Ticker, TickerInterval } from '../../../../src/http/public/markets/markets.types';
+import { Depth, FundingIntervalRates, Kline, KlineInterval, KlinePriceType, Market, MarkPrice, OpenInterest, Ticker, TickerInterval, Event, Tag, MarketSession, MarketHoliday, Security } from '../../../../src/http/public/markets/markets.types';
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
 
@@ -294,4 +294,114 @@ describe('Public Markets API Tests', () => {
     });
   });
 
-}); 
+  describe('Get prediction events', () => {
+    it('Retrieves the prediction events supported by the exchange', async () => {
+      const response = await bpxClient.markets.getPredictionEvents();
+
+      expect(isSuccess(response)).toBe(true);
+      expect(response.data).toBeDefined();
+      expect(Array.isArray(response.data)).toBe(true);
+
+      const events = response.data as Event[];
+
+      events.forEach(event => {
+        expect(event).toMatchObject({
+          slug: expect.any(String),
+          title: expect.any(String),
+          description: expect.any(String),
+          quoteVolume: expect.any(String),
+          resolution: expect.any(Object),
+          resolved: expect.any(Boolean),
+          resolutionDelaySecs: expect.any(Number)
+        });
+        expect(Array.isArray(event.predictionMarkets)).toBe(true);
+        expect(Array.isArray(event.tags)).toBe(true);
+        expect(Array.isArray(event.series)).toBe(true);
+      });
+    });
+  });
+
+  describe('Get prediction tags', () => {
+    it('Retrieves the prediction tags', async () => {
+      const response = await bpxClient.markets.getPredictionTags();
+
+      expect(isSuccess(response)).toBe(true);
+      expect(response.data).toBeDefined();
+      expect(Array.isArray(response.data)).toBe(true);
+
+      const tags = response.data as Tag[];
+
+      tags.forEach(tag => {
+        expect(tag).toMatchObject({
+          slug: expect.any(String),
+          title: expect.any(String)
+        });
+      });
+    });
+  });
+
+  describe('Get market sessions', () => {
+    it('Retrieves the market sessions', async () => {
+      const response = await bpxClient.markets.getMarketSessions();
+
+      expect(isSuccess(response)).toBe(true);
+      expect(response.data).toBeDefined();
+      expect(Array.isArray(response.data)).toBe(true);
+
+      const sessions = response.data as MarketSession[];
+
+      sessions.forEach(session => {
+        expect(session).toMatchObject({
+          name: expect.any(String),
+          startTime: expect.any(String),
+          endTime: expect.any(String),
+          timezone: expect.any(String),
+          startWeekday: expect.any(Number),
+          endWeekday: expect.any(Number)
+        });
+      });
+    });
+  });
+
+  describe('Get market holidays', () => {
+    it('Retrieves the market holidays', async () => {
+      const response = await bpxClient.markets.getMarketHolidays();
+
+      expect(isSuccess(response)).toBe(true);
+      expect(response.data).toBeDefined();
+      expect(Array.isArray(response.data)).toBe(true);
+
+      const holidays = response.data as MarketHoliday[];
+
+      holidays.forEach(holiday => {
+        expect(holiday).toMatchObject({
+          market: expect.any(String),
+          name: expect.any(String),
+          date: expect.any(String),
+          timezone: expect.any(String)
+        });
+      });
+    });
+  });
+
+  describe('Get securities', () => {
+    it('Retrieves the securities', async () => {
+      const response = await bpxClient.markets.getSecurities();
+
+      expect(isSuccess(response)).toBe(true);
+      expect(response.data).toBeDefined();
+      expect(Array.isArray(response.data)).toBe(true);
+
+      const securities = response.data as Security[];
+
+      securities.forEach(security => {
+        expect(security).toMatchObject({
+          asset: expect.any(String),
+          name: expect.any(String)
+        });
+        expect(Array.isArray(security.sessions)).toBe(true);
+      });
+    });
+  });
+
+});

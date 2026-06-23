@@ -19,4 +19,8 @@ npm-debug.log*
 # Test coverage
 coverage/ 
 
-sample/
+# LLM
+.claude/
+
+# OpenAPI spec (large reference artifact, not part of the published package)
+docs/openapi.json

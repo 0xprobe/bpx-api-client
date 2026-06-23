@@ -1,6 +1,6 @@
 import { isSuccess } from '../../../../src/http/bpxHttpHandler';
 import { createClient } from '../../setup';
-import { AccountWithdrawalPayload, TransfersRequest, Withdrawal } from '../../../../src/http/private/capital/capital.types';
+import { AccountWithdrawalPayload, TransfersRequest, Withdrawal, DustConversionHistoryRequest, DustConversion, SettlementHistoryRequest, Settlement } from '../../../../src/http/private/capital/capital.types';
 
 describe('Capital API Tests', () => {
   let bpxClient: ReturnType<typeof createClient>;
@@ -39,17 +39,6 @@ describe('Capital API Tests', () => {
       expect(response.data).toMatchObject({
         assetsValue: expect.any(String),
         borrowLiability: expect.any(String),
-        collateral: expect.arrayContaining([{
-          symbol: expect.any(String),
-          assetMarkPrice: expect.any(String),
-          totalQuantity: expect.any(String),
-          balanceNotional: expect.any(String),
-          collateralWeight: expect.any(String),
-          collateralValue: expect.any(String),
-          openOrderQuantity: expect.any(String),
-          lendQuantity: expect.any(String),
-          availableQuantity: expect.any(String)
-        }]),
         imf: expect.any(String),
         unsettledEquity: expect.any(String),
         liabilitiesValue: expect.any(String),
@@ -60,6 +49,23 @@ describe('Capital API Tests', () => {
         netExposureFutures: expect.any(String),
         pnlUnrealized: expect.any(String),
       });
+
+      // collateral may be empty depending on the account; validate each element when present.
+      expect(Array.isArray(response.data.collateral)).toBe(true);
+      response.data.collateral.forEach(item => {
+        expect(item).toMatchObject({
+          symbol: expect.any(String),
+          assetMarkPrice: expect.any(String),
+          totalQuantity: expect.any(String),
+          balanceNotional: expect.any(String),
+          collateralWeight: expect.any(String),
+          collateralValue: expect.any(String),
+          openOrderQuantity: expect.any(String),
+          lendQuantity: expect.any(String),
+          availableQuantity: expect.any(String)
+        });
+      });
+
       // Optional fields type checking if they exist
       if (response.data.marginFraction !== null) {
         expect(typeof response.data.marginFraction).toBe('string');
@@ -186,6 +192,66 @@ describe('Capital API Tests', () => {
         }
         if (withdrawal.triggerAt !== null) {
           expect(typeof withdrawal.triggerAt).toBe('string');
+        }
+      });
+    });
+  });
+
+  // WARNING: This test converts dust balances.
+  describe.skip('Convert dust balance', () => {
+    it('Converts dust balance to the base asset', async () => {
+      const response = await bpxClient.capital.convertDustBalance('IO');
+      expect(isSuccess(response)).toBe(true);
+    });
+  });
+
+  describe('Get dust conversion history', () => {
+    it('Retrieves the dust conversion history for the user', async () => {
+      const request: DustConversionHistoryRequest = {
+        limit: 10,
+        offset: 0
+      };
+
+      const response = await bpxClient.capital.getDustConversionHistory(request);
+
+      expect(isSuccess(response)).toBe(true);
+      const conversions = response.data as DustConversion[];
+      // expect(conversions.length).toBeGreaterThan(0);
+
+      conversions.forEach(conversion => {
+        expect(conversion).toMatchObject({
+          id: expect.any(Number),
+          quantity: expect.any(String),
+          symbol: expect.any(String),
+          usdcReceived: expect.any(String),
+          timestamp: expect.any(String)
+        });
+      });
+    });
+  });
+
+  describe('Get settlement history', () => {
+    it('History of settlement operations for the account', async () => {
+      const request: SettlementHistoryRequest = {
+        limit: 10,
+        offset: 0
+      };
+
+      const response = await bpxClient.capital.getSettlementHistory(request);
+
+      expect(isSuccess(response)).toBe(true);
+      const settlements = response.data as Settlement[];
+      // expect(settlements.length).toBeGreaterThan(0);
+
+      settlements.forEach(settlement => {
+        expect(settlement).toMatchObject({
+          quantity: expect.any(String),
+          source: expect.any(String),
+          timestamp: expect.any(String),
+          userId: expect.any(Number)
+        });
+        if (settlement.subaccountId !== null) {
+          expect(typeof settlement.subaccountId).toBe('number');
         }
       });
     });

@@ -10,3 +10,8 @@ export enum Status {
   Maintenance = 'Maintenance',
 }
 
+export interface WalletResponse {
+  blockchain: string;
+  address: string;
+}
+

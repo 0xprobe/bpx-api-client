@@ -1,4 +1,4 @@
-import { MarketType, PositionImfFunction } from "../../common/common.types";
+import { CustodyAsset, MarketType, PositionImfFunction } from "../../common/common.types";
 
 export interface Market {
   symbol: string;
@@ -156,4 +156,119 @@ export interface FundingIntervalRates {
   symbol: string;
   intervalEndTimestamp: string;
   fundingRate: string;
+}
+
+export interface PredictionRequest {
+  symbol?: string;
+  tagSlug?: string;
+  eventSlug?: string;
+  seriesSlug?: string;
+  resolved?: boolean;
+  limit?: number;
+  offset?: number;
+}
+
+export interface Event {
+  slug: string;
+  title: string;
+  predictionMarkets: PredictionMarket[];
+  tags: Tag[];
+  series: Series[];
+  description: string;
+  imgUrl?: string;
+  quoteVolume: string;
+  resolution: Resolution;
+  resolved: boolean;
+  resolutionDelaySecs: number;
+}
+
+export interface PredictionMarket {
+  marketSymbol: string;
+  question: string;
+  groupLabel?: string;
+  yesOutcomeLabel: string;
+  noOutcomeLabel: string;
+  rules: string;
+  resolvedAt?: string;
+  resolutionPrice?: string;
+  activePrice: string;
+  quoteVolume: string;
+  quoteVolumeLifetime: string;
+  imgUrl?: string;
+  resolutionCondition?: ResolutionCondition;
+  proposedResolution?: boolean;
+  proposedResolutionAt?: string;
+  resolutionDelaySecs: number;
+}
+
+export interface Tag {
+  slug: string;
+  title: string;
+}
+
+export interface Series {
+  slug: string;
+  title: string;
+  recurrence?: SeriesRecurrence;
+}
+
+export enum SeriesRecurrence {
+  Minutely = 'minutely',
+  FiveMinutely = 'fiveMinutely',
+  FifteenMinutely = 'fifteenMinutely',
+  Hourly = 'hourly',
+  Daily = 'daily',
+  Weekly = 'weekly',
+  Monthly = 'monthly'
+}
+
+export interface Resolution {
+  resolved: boolean;
+  startDate: string;
+  endDate?: string;
+  strikePrice?: string;
+  closePrice?: string;
+  resolutionSourceEventIdentifier?: string;
+  resolutionSource?: ResolutionSource;
+  outcome?: string;
+}
+
+export enum ResolutionSource {
+  Binance = 'binance'
+}
+
+// Opaque object in the OpenAPI spec (no defined properties).
+export type ResolutionCondition = Record<string, unknown>;
+
+export interface MarketSession {
+  name: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
+  timezone: string;
+  startWeekday: number;
+  endWeekday: number;
+}
+
+export interface MarketHoliday {
+  market: string;
+  name: string;
+  date: string;
+  startTime?: string;
+  endTime?: string;
+  timezone: string;
+}
+
+export interface Security {
+  asset: CustodyAsset;
+  name: string;
+  cusip?: string;
+  sessions: SecuritySession[];
+}
+
+export interface SecuritySession {
+  name: string;
+  minQuantity: string;
+  maxQuantity?: string;
+  stepSize: string;
 }
