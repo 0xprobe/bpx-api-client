@@ -17,3 +17,4 @@ export * from './http/private/position/position.types';
 export * from './http/private/borrowLend/borrowLend.types';
 export * from './http/private/rfq/rfq.types';
 export * from './http/private/strategy/strategy.types';
+export * from './websocket/streams.api';

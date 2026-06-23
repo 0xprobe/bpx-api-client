@@ -6,6 +6,8 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
+    "docs/USAGE.md",
+    "docs/MIGRATION.md",
     "README.md",
     "CHANGELOG.md"
   ],
@@ -23,16 +25,18 @@
   ],
   "author": "0xprobe",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xprobe/bpx-api-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0xprobe/bpx-api-client/issues"
+  },
+  "homepage": "https://github.com/0xprobe/bpx-api-client#readme",
   "dependencies": {
-    "@noble/ed25519": "^2.2.3",
-    "@noble/hashes": "^1.4.0",
-    "fs": "^0.0.1-security",
-    "path": "^0.12.7",
-    "readline": "^1.3.0",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1",
-    "ws": "^8.16.0",
-    "yaml": "^2.7.0"
+    "ws": "^8.16.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
