@@ -5,6 +5,8 @@ export interface Market {
   baseSymbol: string;
   quoteSymbol: string;
   marketType: MarketType;
+  // Sub-classification of RWA markets; null for non-RWA (crypto) markets.
+  rwaMarketType: RwaMarketType | null;
   filters: OrderBookFilters;
   imfFunction: PositionImfFunction | null;
   mmfFunction: PositionImfFunction | null;
@@ -12,8 +14,17 @@ export interface Market {
   fundingRateUpperBound: string | null;
   fundingRateLowerBound: string | null;
   openInterestLimit: string | null;
+  positionLimitWeight: string | null;
   orderBookState: OrderBookState;
+  visible: boolean;
   createdAt: string;
+}
+
+export enum RwaMarketType {
+  Stock = 'STOCK',
+  Index = 'INDEX',
+  Commodity = 'COMMODITY',
+  Fx = 'FX'
 }
 
 export interface OrderBookFilters {
@@ -37,13 +48,23 @@ export interface PriceFilter {
     minMultiplier: string | null;
     maxImpactMultiplier: string | null;
     minImpactMultiplier: string | null;
+    maxPriceUpdateMultiplier: string | null;
+    minPriceUpdateMultiplier: string | null;
     meanMarkPriceBand: PriceBandMarkPrice | null;
     meanPremiumBand: PriceBandMeanPremium | null;
+    discoveryBoundBand: PriceBandDiscoveryBound | null;
     borrowEntryFeeMaxMultiplier: string | null;
     borrowEntryFeeMinMultiplier: string | null;
 }
 
 export interface PriceBandMarkPrice {
+  maxMultiplier: string;
+  minMultiplier: string;
+}
+
+// RWA price band: restricts the price from moving too far from the latest
+// external oracle price.
+export interface PriceBandDiscoveryBound {
   maxMultiplier: string;
   minMultiplier: string;
 }
@@ -58,9 +79,17 @@ export interface QuantityFilter {
   stepSize: string;
 }
 
+// Price source for k-lines and tickers: venue trading activity, or the
+// provider-derived (external) feed used for RWA markets.
+export enum KlineSource {
+  Venue = 'Venue',
+  External = 'External'
+}
+
 export interface TickerRequest {
   symbol: string;
   interval?: TickerInterval;
+  source?: KlineSource;
 }
 
 export enum TickerInterval {
@@ -94,9 +123,11 @@ export interface KlineRequest {
   startTime: number;
   endTime?: number;
   priceType?: KlinePriceType;
+  source?: KlineSource;
 }
 
 export enum KlineInterval {
+  OneSecond = '1s',
   OneMinute = '1m',
   ThreeMinutes = '3m',
   FiveMinutes = '5m',
@@ -234,6 +265,7 @@ export interface Resolution {
 }
 
 export enum ResolutionSource {
+  Backpack = 'backpack',
   Binance = 'binance'
 }
 

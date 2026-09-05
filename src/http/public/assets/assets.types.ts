@@ -17,6 +17,7 @@ export interface Token {
     minimumWithdrawal: string;
     maximumWithdrawal: string | null;
     withdrawalFee: string;
+    nativeDecimals?: number;
 }
 
 export interface CollateralSummary {

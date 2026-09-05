@@ -1,4 +1,4 @@
-import { MarketType, SelfTradePrevention, Side, TimeInForce } from "../../common/common.types";
+import { MarketType, SelfTradePrevention, Side, TimeInForce, SlippageToleranceType } from "../../common/common.types";
 
 export interface OrderRequest {
   clientId?: number;
@@ -18,6 +18,8 @@ export interface MarketOrder {
   quantity: string | null;
   quoteQuantity: string | null;
   reduceOnly: boolean | null;
+  slippageTolerance: string | null;
+  slippageToleranceType: SlippageToleranceType | null;
   timeInForce: TimeInForce;
   selfTradePrevention: SelfTradePrevention;
   side: Side;
@@ -114,6 +116,9 @@ export interface OrderExecutePayload {
   triggerBy?: string;
   triggerPrice?: string;
   triggerQuantity?: string;
+
+  slippageTolerance?: string;
+  slippageToleranceType?: SlippageToleranceType;
 }
 
 export interface OpenOrdersRequest {
@@ -140,6 +145,13 @@ export interface FillHistoryRequest {
   offset?: number;
   fillType?: FillType;
   marketType?: MarketType[];
+  assetClass?: AssetClass;
+}
+
+// Asset class filter: crypto markets, or tokenized stock (RWA) markets.
+export enum AssetClass {
+  Crypto = 'CRYPTO',
+  Stock = 'STOCK'
 }
 
 export enum FillType {
@@ -213,10 +225,13 @@ export interface Order {
   clientId: number | null;
   systemOrderType: SystemOrderType | null;
   strategyId: string | null;
+  slippageTolerance: string | null;
+  slippageToleranceType: SlippageToleranceType | null;
 }
 
 export enum OrderExpiryReason {
   AccountTradingSuspended = 'AccountTradingSuspended',
+  BorrowRequiresLendRedeem = 'BorrowRequiresLendRedeem',
   FillOrKill = 'FillOrKill',
   InsufficientBorrowableQuantity = 'InsufficientBorrowableQuantity',
   InsufficientFunds = 'InsufficientFunds',
@@ -226,9 +241,16 @@ export enum OrderExpiryReason {
   ImmediateOrCancel = 'ImmediateOrCancel',
   InsufficientMargin = 'InsufficientMargin',
   Liquidation = 'Liquidation',
+  MaxStopOrdersPerPosition = 'MaxStopOrdersPerPosition',
+  NegativeEquity = 'NegativeEquity',
+  PositionLimit = 'PositionLimit',
+  PostOnlyMode = 'PostOnlyMode',
   PostOnlyTaker = 'PostOnlyTaker',
+  PriceOutOfBounds = 'PriceOutOfBounds',
   ReduceOnlyNotReduced = 'ReduceOnlyNotReduced',
   SelfTradePrevention = 'SelfTradePrevention',
+  SlippageToleranceExceeded = 'SlippageToleranceExceeded',
+  StopWithoutPosition = 'StopWithoutPosition',
   PriceImpact = 'PriceImpact',
   Unknown = 'Unknown',
   UserPermissions = 'UserPermissions'

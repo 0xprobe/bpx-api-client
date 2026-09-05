@@ -9,6 +9,10 @@ export interface RequestForQuotePayload {
     symbol: string;
     side: Side;
     executionMode?: RfqExecutionMode;
+    autoBorrow?: boolean;
+    autoBorrowRepay?: boolean;
+    autoLend?: boolean;
+    autoLendRedeem?: boolean;
 }
 
 export interface RequestForQuote {
@@ -19,10 +23,14 @@ export interface RequestForQuote {
     price: string | null;
     quantity: string | null;
     quoteQuantity: string | null;
+    // Cumulative quantity settled; `quantity` less this is what remains.
+    executedQuantity?: string;
+    executedQuoteQuantity?: string;
     submissionTime: number;
     expiryTime: number;
     status: OrderStatus;
     executionMode?: RfqExecutionMode;
+    systemOrderType?: SystemOrderType;
     createdAt: number;
 }
 
@@ -51,6 +59,10 @@ export interface QuotePayload {
     clientId?: number;
     bidPrice: string;
     askPrice: string;
+    autoBorrow?: boolean;
+    autoBorrowRepay?: boolean;
+    autoLend?: boolean;
+    autoLendRedeem?: boolean;
 }
 
 export interface Quote {
@@ -67,7 +79,6 @@ export interface RfqsRequest {
     symbol?: string;
     rfqId?: number;
     deferredSettlement?: boolean;
-    subaccountId?: number;
 }
 
 export interface RfqWithQuotes {
@@ -99,6 +110,7 @@ export interface RequestForQuoteHistorical {
   expiryTime: string;
   status: OrderStatus;
   executionMode: 'AwaitAccept';
+  deferredSettlementQuoteId?: string;
   createdAt: string;
 }
 
@@ -120,10 +132,12 @@ export interface QuoteHistorical {
   bidPrice: string;
   askPrice: string;
   status: OrderStatus;
+  deferredSettlement: boolean;
   createdAt: string;
 }
 
 export interface RfqFillHistoryRequest {
+  rfqId?: string;
   quoteId?: string;
   symbol?: string;
   side?: Side;

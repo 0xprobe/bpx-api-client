@@ -27,6 +27,15 @@ export class StreamsApi {
   }
 
   // 1.private
+  // Pushes the new absolute available/locked/staked quantities whenever an asset
+  // balance changes. Cannot be scoped to a single asset.
+  balanceUpdate(type: SubscriptionType) {
+    this.wsHandler.sendWithSignature({
+      method: type,
+      params: ['account.balanceUpdate']
+    });
+  }
+
   orderUpdate(type: SubscriptionType, symbol?: string) {
     this.wsHandler.sendWithSignature({
       method: type,
@@ -70,10 +79,10 @@ export class StreamsApi {
       });
   }
 
-  liquidation(type: SubscriptionType) {
+  liquidation(type: SubscriptionType, symbol: string) {
       this.wsHandler.send({
           method: type,
-          params: ['liquidation']
+          params: ['liquidation.' + symbol]
       });
   }
 
@@ -88,6 +97,23 @@ export class StreamsApi {
       this.wsHandler.send({
           method: type,
           params: ['ticker.' + symbol]
+      });
+  }
+
+  // Provider-derived 24hr statistics, separate from `ticker` (venue activity).
+  externalTicker(type: SubscriptionType, symbol: string) {
+      this.wsHandler.send({
+          method: type,
+          params: ['externalTicker.' + symbol]
+      });
+  }
+
+  // Provider-derived stock quote. Takes a bare stock ticker (e.g. 'BRK.B'),
+  // not an exchange asset ('AAPL.US') or market symbol ('AAPL.US_USDC').
+  stockPrice(type: SubscriptionType, ticker: string) {
+      this.wsHandler.send({
+          method: type,
+          params: ['stockPrice.' + ticker]
       });
   }
 

@@ -11,6 +11,7 @@ export interface BorrowLendPositionWithMargin {
   mmfFunction: PositionImfFunction;
   netExposureQuantity: string;
   netExposureNotional: string;
+  estLiquidationPrice: string;
   symbol: string;
 }
 
@@ -67,12 +68,14 @@ export enum BorrowLendSource {
   AutoBorrowRepay = 'AutoBorrowRepay',
   AutoLend = 'AutoLend',
   BackstopProvider = 'BackstopProvider',
+  DustConversion = 'DustConversion',
   Interest = 'Interest',
   Liquidation = 'Liquidation',
   LiquidationAdl = 'LiquidationAdl',
   LiquidationBackstop = 'LiquidationBackstop',
   Manual = 'Manual',
   Reconciliation = 'Reconciliation',
+  Rfq = 'Rfq',
   SpotMargin = 'SpotMargin',
   Withdrawal = 'Withdrawal'
 }
