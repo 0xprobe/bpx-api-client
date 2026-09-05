@@ -1,5 +1,5 @@
 import { HttpMethod } from '../../common/api.types';
-import { Depth, Market, TickerRequest, Ticker, Kline, KlineRequest, MarkPrice, OpenInterest, FundingIntervalRatesRequest, FundingIntervalRates, TickerInterval, PredictionRequest, Event, Tag, MarketSession, MarketHoliday, Security } from './markets.types';
+import { Depth, Market, TickerRequest, Ticker, Kline, KlineRequest, MarkPrice, OpenInterest, FundingIntervalRatesRequest, FundingIntervalRates, TickerInterval, PredictionRequest, Event, Tag, MarketSession, MarketHoliday, Security, KlineSource } from './markets.types';
 import { BpxHttpHandler } from '../../bpxHttpHandler';
 
 export class MarketsApi {
@@ -23,8 +23,9 @@ export class MarketsApi {
   }
 
   // https://docs.backpack.exchange/#tag/Markets/operation/get_tickers
-  async getTickers(interval?: TickerInterval) {
-    return this.httpHandler.execute<Ticker[]>(HttpMethod.GET, '/api/v1/tickers', interval ? { interval } : undefined);
+  async getTickers(interval?: TickerInterval, source?: KlineSource) {
+    const queryParams = { ...(interval ? { interval } : {}), ...(source ? { source } : {}) };
+    return this.httpHandler.execute<Ticker[]>(HttpMethod.GET, '/api/v1/tickers', Object.keys(queryParams).length ? queryParams : undefined);
   }
 
   // https://docs.backpack.exchange/#tag/Markets/operation/get_depth

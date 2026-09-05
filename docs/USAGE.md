@@ -77,7 +77,7 @@ await client.borrowLendMarkets.getApyRates();
 | `getMarkets()` | `Market[]` |
 | `getMarket(symbol: string)` | `Market` |
 | `getTicker(params: TickerRequest)` | `Ticker` |
-| `getTickers(interval?: TickerInterval)` | `Ticker[]` |
+| `getTickers(interval?: TickerInterval, source?: KlineSource)` | `Ticker[]` |
 | `getDepth(symbol: string)` | `Depth` |
 | `getKlines(params: KlineRequest)` | `Kline[]` |
 | `getMarkPrices(symbol?: string)` | `MarkPrice[]` |
@@ -97,6 +97,33 @@ await client.markets.getDepth('SOL_USDC');
 await client.markets.getKlines({ symbol: 'SOL_USDC', interval: KlineInterval.OneHour, startTime: 1700000000 });
 await client.markets.getPredictionEvents({ limit: 10 });
 await client.markets.getSecurities();
+```
+
+### Tokenized stocks (RWA)
+
+Stocks trade as ordinary `SPOT` and `PERP` markets; `rwaMarketType` is what marks
+them (it is `null` on crypto markets). Trading hours come from
+`getMarketSessions()` / `getMarketHolidays()`, and per-session quantity filters
+from `getSecurities()`.
+
+```typescript
+import { RwaMarketType, KlineSource, AssetClass } from 'bpx-api-client';
+
+// Find the stock markets
+const markets = await client.markets.getMarkets();
+const stocks = markets.data.filter((m) => m.rwaMarketType === RwaMarketType.Stock);
+
+// Provider-derived (external) prices instead of venue trading activity
+await client.markets.getKlines({
+  symbol: 'MU.US_USDC',
+  interval: KlineInterval.OneHour,
+  startTime: 1700000000,
+  source: KlineSource.External
+});
+await client.markets.getTickers(undefined, KlineSource.External);
+
+// Fills for stock markets only
+await client.order.getFillHistory({ assetClass: AssetClass.Stock, limit: 50 });
 ```
 
 ## System
@@ -280,7 +307,8 @@ await client.strategy.getOpenStrategies({ symbol: 'SOL_USDC' });
 # WebSocket streams
 
 `client.streams` manages a single WebSocket connection. Public streams are sent as-is;
-private streams (`orderUpdate`, `positionUpdate`, `RFQUpdate`) are signed automatically.
+private streams (`balanceUpdate`, `orderUpdate`, `positionUpdate`, `RFQUpdate`) are signed
+automatically.
 
 ```typescript
 import { SubscriptionType, KlineInterval } from 'bpx-api-client';
@@ -299,12 +327,19 @@ client.streams.ticker(SubscriptionType.SUBSCRIBE, 'SOL_USDC');
 client.streams.markPrice(SubscriptionType.SUBSCRIBE, 'SOL_USDC_PERP');
 client.streams.openInterest(SubscriptionType.SUBSCRIBE, 'SOL_USDC_PERP');
 client.streams.trade(SubscriptionType.SUBSCRIBE, 'SOL_USDC');
-client.streams.liquidation(SubscriptionType.SUBSCRIBE);
+client.streams.liquidation(SubscriptionType.SUBSCRIBE, 'SOL_USDC_PERP');
+
+// Provider-derived streams for tokenized stocks (RWA).
+// `externalTicker` takes a market symbol; `stockPrice` takes a bare stock
+// ticker ('AAPL', 'BRK.B') — not 'AAPL.US' or 'AAPL.US_USDC'.
+client.streams.externalTicker(SubscriptionType.SUBSCRIBE, 'MU.US_USDC');
+client.streams.stockPrice(SubscriptionType.SUBSCRIBE, 'AAPL');
 
 // Private streams (require credentials)
 client.streams.orderUpdate(SubscriptionType.SUBSCRIBE, 'BTC_USDC');
 client.streams.positionUpdate(SubscriptionType.SUBSCRIBE);
 client.streams.RFQUpdate(SubscriptionType.SUBSCRIBE);
+client.streams.balanceUpdate(SubscriptionType.SUBSCRIBE); // account-wide only
 
 // Stop a single handler, or close the whole connection
 unsubscribe();
@@ -316,9 +351,11 @@ await client.streams.close();
 | `open()` / `close()` | connection |
 | `addMessageHandler(cb)` → `() => void` | returns an unsubscribe function |
 | `orderUpdate / positionUpdate / RFQUpdate(type, symbol?)` | private |
-| `bookTicker / depth / ticker / markPrice / openInterest / trade(type, symbol)` | public |
+| `balanceUpdate(type)` | private — account-wide, cannot be scoped to one asset |
+| `bookTicker / depth / ticker / markPrice / openInterest / trade / liquidation(type, symbol)` | public |
 | `kline(type, interval, symbol)` | public |
-| `liquidation(type)` | public |
+| `externalTicker(type, symbol)` | public — provider-derived 24hr stats (`ticker` is venue-only) |
+| `stockPrice(type, ticker)` | public — provider stock quote, bare ticker |
 
 ---
 

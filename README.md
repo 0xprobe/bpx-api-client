@@ -145,8 +145,13 @@ client.streams.addMessageHandler((message) => {
 // Subscribe to public streams
 client.streams.bookTicker(SubscriptionType.SUBSCRIBE, 'SOL_USDC');
 
+// Provider-derived streams for tokenized stocks (RWA)
+client.streams.externalTicker(SubscriptionType.SUBSCRIBE, 'MU.US_USDC');
+client.streams.stockPrice(SubscriptionType.SUBSCRIBE, 'AAPL'); // bare ticker
+
 // Subscribe to private streams (signed automatically)
 client.streams.orderUpdate(SubscriptionType.SUBSCRIBE, 'BTC_USDC');
+client.streams.balanceUpdate(SubscriptionType.SUBSCRIBE);      // account-wide
 
 // Close WebSocket connection
 await client.streams.close();
@@ -184,7 +189,7 @@ The client mirrors the categories in the official API documentation.
 
 ### WebSocket
 
-`client.streams` — order/position/RFQ updates, book ticker, depth, k-line, liquidation, mark price, ticker, open interest, trade.
+`client.streams` — order/position/RFQ/balance updates, book ticker, depth, k-line, liquidation, mark price, ticker, external ticker, stock price, open interest, trade.
 
 ## Features
 

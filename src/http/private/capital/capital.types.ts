@@ -56,6 +56,8 @@ export interface Deposit {
   fiatAmount: number;
   fiatCurrency: string;
   institutionBic: string;
+  // Name of the bank the funds were deposited from, for Plaid (ACH) deposits.
+  institutionName?: string;
   platformMemo: string;
 }
 
@@ -96,6 +98,13 @@ export interface AccountWithdrawalPayload {
   twoFactorToken?: string;
   autoBorrow?: boolean;
   autoLendRedeem?: boolean;
+  recipientInformation?: WithdrawalRecipientInformation;
+}
+
+export interface WithdrawalRecipientInformation {
+  withdrawal_address_id: number;
+  withdrawal_purpose?: string;
+  sanctions_representation?: boolean;
 }
 
 export interface DustConversionHistoryRequest {
@@ -122,9 +131,6 @@ export interface SettlementHistoryRequest {
 
 export enum SettlementSourceFilter {
   BackstopLiquidation = 'BackstopLiquidation',
-  CulledBorrowInterest = 'CulledBorrowInterest',
-  CulledRealizePnl = 'CulledRealizePnl',
-  CulledRealizePnlBookUtilization = 'CulledRealizePnlBookUtilization',
   FundingPayment = 'FundingPayment',
   RealizePnl = 'RealizePnl',
   TradingFees = 'TradingFees',
@@ -137,19 +143,17 @@ export interface Settlement {
   subaccountId: number | null;
   timestamp: string;
   userId: number;
+  engineSequence?: number;
+  positionId?: string;
 }
 
 export enum SettlementSource {
   TradingFees = 'TradingFees',
   TradingFeesSystem = 'TradingFeesSystem',
   FundingPayment = 'FundingPayment',
-  CulledBorrowInterest = 'CulledBorrowInterest',
-  CulledRealizePnlAuto = 'CulledRealizePnlAuto',
-  CulledRealizePnlBookUtilisation = 'CulledRealizePnlBookUtilisation',
-  CulledRealizePnlAccountThreshold = 'CulledRealizePnlAccountThreshold',
-  CulledRealizePnlSystemThreshold = 'CulledRealizePnlSystemThreshold',
   RealizePnl = 'RealizePnl',
   BackstopProviderLiquidation = 'BackstopProviderLiquidation',
   BackstopAdlLiquidation = 'BackstopAdlLiquidation',
-  BackstopLiquidityFundProceeds = 'BackstopLiquidityFundProceeds'
+  BackstopLiquidityFundProceeds = 'BackstopLiquidityFundProceeds',
+  SystemLiabilityTransfer = 'SystemLiabilityTransfer'
 }

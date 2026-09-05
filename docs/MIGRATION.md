@@ -1,5 +1,50 @@
 # Migration Guide
 
+## Upgrading from 0.2.0
+
+Mostly additive, but three changes can require a code update.
+
+### `streams.liquidation` now takes a symbol
+
+The documented stream name is `liquidation.<symbol>`; the client previously
+subscribed to a bare `liquidation` stream, which silently received nothing.
+
+```typescript
+// Before (0.2.0) — subscribed, but no messages ever arrived
+client.streams.liquidation(SubscriptionType.SUBSCRIBE);
+
+// After
+client.streams.liquidation(SubscriptionType.SUBSCRIBE, 'SOL_USDC_PERP');
+```
+
+### Removed settlement enum values
+
+Removed from the exchange API on 2026-07-17. Culled realize PnL settlements are
+now reported as `RealizePnl`, culled borrow interest as `TradingFees`.
+
+| Enum | Removed values |
+|------|----------------|
+| `SettlementSourceFilter` | `CulledBorrowInterest`, `CulledRealizePnl`, `CulledRealizePnlBookUtilization` |
+| `SettlementSource` | `CulledBorrowInterest`, `CulledRealizePnlAuto`, `CulledRealizePnlBookUtilisation`, `CulledRealizePnlAccountThreshold`, `CulledRealizePnlSystemThreshold` |
+
+```typescript
+// Before
+client.capital.getSettlementHistory({ source: SettlementSourceFilter.CulledBorrowInterest });
+
+// After — those settlements are reported under TradingFees
+client.capital.getSettlementHistory({ source: SettlementSourceFilter.TradingFees });
+```
+
+### `StrategyCreatePayload.brokerId` removed
+
+The field is no longer part of the API; drop it from strategy creation payloads.
+
+> `SlippageToleranceType` moved from `strategy.types` to `common.types`. It is still
+> exported from the package root, so `import { SlippageToleranceType } from 'bpx-api-client'`
+> is unaffected.
+
+---
+
 ## Upgrading from 0.1.x
 
 The client modules were reorganized to match the categories used in the official

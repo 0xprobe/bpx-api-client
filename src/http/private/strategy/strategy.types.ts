@@ -1,4 +1,6 @@
-import { MarketType, SelfTradePrevention, Side, TimeInForce, SortDirection } from "../../common/common.types";
+import { MarketType, SelfTradePrevention, Side, TimeInForce, SortDirection, SlippageToleranceType } from "../../common/common.types";
+
+export { SlippageToleranceType };
 
 export interface StrategyRequest {
   clientStrategyId?: number;
@@ -17,7 +19,6 @@ export interface StrategyCreatePayload {
   autoLendRedeem?: boolean;
   autoBorrow?: boolean;
   autoBorrowRepay?: boolean;
-  brokerId?: number;
   clientStrategyId?: number;
   strategyType: StrategyTypeEnum;
   quantity?: string;
@@ -44,11 +45,6 @@ export interface StrategyCancelPayload {
 export interface StrategyCancelAllPayload {
   symbol: string;
   strategyType?: StrategyTypeEnum;
-}
-
-export enum SlippageToleranceType {
-  TickSize = 'TickSize',
-  Percent = 'Percent'
 }
 
 // StrategyType is a discriminated union on `strategyType`; currently the only
@@ -105,6 +101,9 @@ export interface Strategy {
   duration: number;
   interval: number;
   randomizedIntervalQuantity: boolean;
+  quoteAsset?: string;
+  slippageTolerance?: string;
+  slippageToleranceType?: SlippageToleranceType;
 }
 
 export enum StrategyCrankCancelReason {
@@ -117,6 +116,7 @@ export enum StrategyCrankCancelReason {
   InvalidQuantity = 'InvalidQuantity',
   InsufficientMargin = 'InsufficientMargin',
   Liquidation = 'Liquidation',
+  PositionLimit = 'PositionLimit',
   PriceOutOfBounds = 'PriceOutOfBounds',
   ReduceOnlyNotReduced = 'ReduceOnlyNotReduced',
   SelfTradePrevention = 'SelfTradePrevention',
